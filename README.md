@@ -1,3 +1,5 @@
+
+
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -1107,7 +1109,7 @@
       }
     }
 
-    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzvFdRB-rD_eZW-yl2gitJ3BZK0RjrPl1xmc79Q6ISE01k9lZNgp3itWRnuAviK1de74Q/exec"; 
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbx1y0ZQcPX9v66ddWlU8B5xCnOpgGvld39iY3EVNzKQ9tcNcod2onajvq0fM2p6pqExqQ/exec"; 
     
     const ONE_HOUR_MS = 1 * 60 * 60 * 1000;
     let activeModalBooking = null;
@@ -2963,10 +2965,20 @@
         const dd = String(todayDt.getDate()).padStart(2, '0');
         const todayStr = `${yyyy}-${mm}-${dd}`;
 
+        const tomorrowDt = new Date(todayDt);
+        tomorrowDt.setDate(tomorrowDt.getDate() + 1);
+        const t_yyyy = tomorrowDt.getFullYear();
+        const t_mm = String(tomorrowDt.getMonth() + 1).padStart(2, '0');
+        const t_dd = String(tomorrowDt.getDate()).padStart(2, '0');
+        const tomorrowStr = `${t_yyyy}-${t_mm}-${t_dd}`;
+
         const checkInElem = document.getElementById('cust-checkin-date');
         checkInElem.min = todayStr;
+        checkInElem.value = todayStr;
+
         const checkOutElem = document.getElementById('cust-checkout-date');
         checkOutElem.min = todayStr;
+        checkOutElem.value = tomorrowStr;
 
         populateRoomDropdown(state.roomsCapacity.length > 0 ? [state.roomsCapacity[0].roomNo] : []);
 
