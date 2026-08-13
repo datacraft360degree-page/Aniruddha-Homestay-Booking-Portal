@@ -1620,7 +1620,7 @@
       const filteredBookings = state.bookings.filter(b => {
         if(!b.checkIn) return false;
         
-        const bIn = b.checkIn.split('T')[0];
+        const bIn = String(b.checkIn).replace(' ', 'T').split('T')[0];
         return (bIn >= startDateStr) && (bIn <= endDateStr);
       });
 
@@ -2891,41 +2891,41 @@
         if (extraPersonsInput) extraPersonsInput.value = b.extraPersons || 0;
         
         if (b.extraPersonJoined) {
-          const [epDate, epTime] = b.extraPersonJoined.split('T');
+          const [epDate, epTime] = String(b.extraPersonJoined).replace(' ', 'T').split('T');
           if (extraPersonDateInput) extraPersonDateInput.value = epDate || '';
-          if (extraPersonTimeInput) extraPersonTimeInput.value = epTime || '';
+          if (extraPersonTimeInput) extraPersonTimeInput.value = epTime ? epTime.substring(0, 5) : '';
         } else {
           if (extraPersonDateInput) extraPersonDateInput.value = '';
           if (extraPersonTimeInput) extraPersonTimeInput.value = '';
         }
 
         if (b.extraPersonOut) {
-          const [epOutDate, epOutTime] = b.extraPersonOut.split('T');
+          const [epOutDate, epOutTime] = String(b.extraPersonOut).replace(' ', 'T').split('T');
           if (extraPersonOutDateInput) extraPersonOutDateInput.value = epOutDate || '';
-          if (extraPersonOutTimeInput) extraPersonOutTimeInput.value = epOutTime || '';
+          if (extraPersonOutTimeInput) extraPersonOutTimeInput.value = epOutTime ? epOutTime.substring(0, 5) : '';
         } else {
           if (extraPersonOutDateInput) extraPersonOutDateInput.value = '';
           if (extraPersonOutTimeInput) extraPersonOutTimeInput.value = '';
         }
 
         if (b.checkIn) {
-          const [inDate, inTime] = b.checkIn.split('T');
+          const [inDate, inTime] = String(b.checkIn).replace(' ', 'T').split('T');
           document.getElementById('cust-checkin-date').value = inDate || '';
-          document.getElementById('cust-checkin-time').value = inTime || '';
+          document.getElementById('cust-checkin-time').value = inTime ? inTime.substring(0, 5) : '';
         }
         if (b.checkOut) {
-          const [outDate, outTime] = b.checkOut.split('T');
+          const [outDate, outTime] = String(b.checkOut).replace(' ', 'T').split('T');
           document.getElementById('cust-checkout-date').value = outDate || '';
-          document.getElementById('cust-checkout-time').value = outTime || '';
+          document.getElementById('cust-checkout-time').value = outTime ? outTime.substring(0, 5) : '';
           if (extDateInput) extDateInput.min = outDate || '';
         }
 
         extChkBox.checked = isTrue(b.hasExtendedCheckout);
         toggleExtendedCheckoutFields(extChkBox.checked);
         if (isTrue(b.hasExtendedCheckout) && b.extendedCheckOut) {
-          const [eDate, eTime] = b.extendedCheckOut.split('T');
+          const [eDate, eTime] = String(b.extendedCheckOut).replace(' ', 'T').split('T');
           extDateInput.value = eDate || '';
-          extTimeInput.value = eTime || '';
+          extTimeInput.value = eTime ? eTime.substring(0, 5) : '';
         }
 
         if (mealsChkBox) {
@@ -2943,9 +2943,9 @@
            foList.forEach(fo => {
             let fDate = '', fTime = '';
             if (fo.foodDateTime) {
-              const parts = fo.foodDateTime.split('T');
+              const parts = String(fo.foodDateTime).replace(' ', 'T').split('T');
               fDate = parts[0] || '';
-              fTime = parts[1] || '';
+              fTime = parts[1] ? parts[1].substring(0, 5) : '';
             }
             addFoodOrderItem(fo.foodDesc || '', fo.plates || 1, fo.itemPrice || 0, fo.foodCharge || 0, fDate, fTime, isClosedAndWithin3Days);
           });
@@ -3592,9 +3592,9 @@
       if (dateFilter) {
         listToRender = listToRender.filter(b => {
           if (!b.checkIn || !b.checkOut) return false;
-          const bIn = b.checkIn.split('T')[0];
+          const bIn = String(b.checkIn).replace(' ', 'T').split('T')[0];
           const bOutVal = (isTrue(b.hasExtendedCheckout) && b.extendedCheckOut) ? b.extendedCheckOut : b.checkOut;
-          const bOut = bOutVal.split('T')[0];
+          const bOut = String(bOutVal).replace(' ', 'T').split('T')[0];
           return (dateFilter >= bIn && dateFilter <= bOut);
         });
       }
@@ -3912,9 +3912,9 @@
             if (isInactiveBooking(b) || !b.checkIn || !b.checkOut) return false;
             if (!isRoomInMaster(b.roomNo)) return false;
 
-            const bIn = b.checkIn.split('T')[0];
+            const bIn = String(b.checkIn).replace(' ', 'T').split('T')[0];
             const bOutVal = (isTrue(b.hasExtendedCheckout) && b.extendedCheckOut) ? b.extendedCheckOut : b.checkOut;
-            const bOut = bOutVal.split('T')[0];
+            const bOut = String(bOutVal).replace(' ', 'T').split('T')[0];
 
             return (dateStr >= bIn && dateStr <= bOut);
           });
