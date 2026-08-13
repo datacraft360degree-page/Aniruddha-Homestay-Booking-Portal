@@ -1,5 +1,3 @@
-
-
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -1109,7 +1107,7 @@
       }
     }
 
-    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzvFdRB-rD_eZW-yl2gitJ3BZK0RjrPl1xmc79Q6ISE01k9lZNgp3itWRnuAviK1de74Q/exec"; 
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbx1y0ZQcPX9v66ddWlU8B5xCnOpgGvld39iY3EVNzKQ9tcNcod2onajvq0fM2p6pqExqQ/exec"; 
     
     const ONE_HOUR_MS = 1 * 60 * 60 * 1000;
     let activeModalBooking = null;
@@ -2958,6 +2956,18 @@
         setInputEnabled(document.getElementById('cust-checkout-date'), true);
         setInputEnabled(document.getElementById('cust-checkout-time'), true);
 
+        // Calculate and set today's date as min for new bookings
+        const todayDt = new Date();
+        const yyyy = todayDt.getFullYear();
+        const mm = String(todayDt.getMonth() + 1).padStart(2, '0');
+        const dd = String(todayDt.getDate()).padStart(2, '0');
+        const todayStr = `${yyyy}-${mm}-${dd}`;
+
+        const checkInElem = document.getElementById('cust-checkin-date');
+        checkInElem.min = todayStr;
+        const checkOutElem = document.getElementById('cust-checkout-date');
+        checkOutElem.min = todayStr;
+
         populateRoomDropdown(state.roomsCapacity.length > 0 ? [state.roomsCapacity[0].roomNo] : []);
 
         document.getElementById('cust-country-code').value = "+91";
@@ -3074,8 +3084,16 @@
     }
 
     function handleStayDatesChange() {
+      const inDateInput = document.getElementById('cust-checkin-date');
       const outDateInput = document.getElementById('cust-checkout-date');
       const extDateInput = document.getElementById('cust-ext-checkout-date');
+
+      if (inDateInput && outDateInput) {
+        outDateInput.min = inDateInput.value;
+        if (outDateInput.value && outDateInput.value < inDateInput.value) {
+          outDateInput.value = inDateInput.value;
+        }
+      }
 
       if (outDateInput && extDateInput) {
         extDateInput.min = outDateInput.value;
@@ -3229,6 +3247,20 @@
 
       const bookingModalId = document.getElementById('modal-booking-id').value;
       const id = bookingModalId;
+
+      // Add strict check-in date validation for New Booking
+      if (!id) {
+        const todayDt = new Date();
+        const yyyy = todayDt.getFullYear();
+        const mm = String(todayDt.getMonth() + 1).padStart(2, '0');
+        const dd = String(todayDt.getDate()).padStart(2, '0');
+        const todayStr = `${yyyy}-${mm}-${dd}`;
+        
+        if (inDate < todayStr) {
+          alert("⚠️ Main check-in date cannot be earlier than today!");
+          return;
+        }
+      }
       
       let selectedRooms = getSelectedRooms();
       if (selectedRooms.includes("ALL")) {
