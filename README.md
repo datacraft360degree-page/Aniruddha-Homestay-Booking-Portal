@@ -2860,11 +2860,11 @@
           ? 'Closed Booking (Billing Active)' 
           : 'Edit Booking Details';
         
-        // ** LOCK MAIN CHECK-IN AND CHECK-OUT DATES IF BOOKING IS ALREADY CREATED **
-        setInputEnabled(document.getElementById('cust-checkin-date'), false);
-        setInputEnabled(document.getElementById('cust-checkin-time'), false);
-        setInputEnabled(document.getElementById('cust-checkout-date'), false);
-        setInputEnabled(document.getElementById('cust-checkout-time'), false);
+        // ** ALLOW EDITING OF MAIN CHECK-IN AND CHECK-OUT DATES IF BOOKING IS ALREADY CREATED **
+        setInputEnabled(document.getElementById('cust-checkin-date'), !isClosedAndWithin3Days);
+        setInputEnabled(document.getElementById('cust-checkin-time'), !isClosedAndWithin3Days);
+        setInputEnabled(document.getElementById('cust-checkout-date'), !isClosedAndWithin3Days);
+        setInputEnabled(document.getElementById('cust-checkout-time'), !isClosedAndWithin3Days);
         
         document.getElementById('modal-booking-id').value = b.id;
         document.getElementById('cust-name').value = formatTitleCase(b.name);
