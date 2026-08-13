@@ -1,3 +1,5 @@
+
+
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -698,17 +700,10 @@
                 <input type="text" id="cust-contact" maxlength="10" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)" placeholder="Mobile No" class="w-2/3 bg-white border border-slate-200 rounded-xl px-2 py-1.5 focus:outline-none focus:border-blue-500" />
               </div>
             </div>
+            <!-- UPDATED TO URL INPUT INSTEAD OF FILE ATTACHMENT -->
             <div class="sm:col-span-2">
-              <label class="block font-semibold text-slate-600 mb-0.5 flex justify-between items-center">
-                <span>Attached ID Proof <span class="text-[9px] text-blue-600 font-normal">(PDF, 10KB - 900KB)</span></span>
-                <button type="button" id="cust-id-file-remove" onclick="removeAttachedIdProof()" class="hidden text-rose-500 hover:text-rose-700 text-[9px] font-bold">Remove</button>
-              </label>
-              <div class="flex items-center gap-1.5">
-                <input type="file" id="cust-id-file" accept="application/pdf" onchange="handleIdProofUpload(event)" class="w-full text-[10px] text-slate-500 file:mr-2 file:py-1 file:px-2.5 file:rounded-xl file:border-0 file:text-[10px] file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer bg-white border border-slate-200 rounded-xl py-1" />
-                <input type="hidden" id="cust-id-file-base64" />
-                <input type="hidden" id="cust-id-file-name" />
-              </div>
-              <p id="cust-id-file-status" class="text-[9px] text-slate-400 mt-0.5 italic">No PDF document attached.</p>
+              <label class="block font-semibold text-slate-600 mb-0.5">Attached ID Proof (Drive Link)</label>
+              <input type="url" id="cust-id-link" placeholder="Paste Google Drive URL here" class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 focus:outline-none focus:border-blue-500" />
             </div>
           </div>
         </div>
@@ -1107,7 +1102,7 @@
       }
     }
 
-    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzvFdRB-rD_eZW-yl2gitJ3BZK0RjrPl1xmc79Q6ISE01k9lZNgp3itWRnuAviK1de74Q/exec"; 
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbx1y0ZQcPX9v66ddWlU8B5xCnOpgGvld39iY3EVNzKQ9tcNcod2onajvq0fM2p6pqExqQ/exec"; 
     
     const ONE_HOUR_MS = 1 * 60 * 60 * 1000;
     let activeModalBooking = null;
@@ -1198,63 +1193,6 @@
 
         row.querySelector('.cust-food-date').value = `${yyyy}-${mm}-${dd}`;
         row.querySelector('.cust-food-time').value = `${hh}:${min}`;
-      }
-    }
-
-    function handleIdProofUpload(e) {
-      const fileInput = e.target;
-      const file = fileInput.files[0];
-      const statusText = document.getElementById('cust-id-file-status');
-      const base64Input = document.getElementById('cust-id-file-base64');
-      const fileNameInput = document.getElementById('cust-id-file-name');
-      const removeBtn = document.getElementById('cust-id-file-remove');
-
-      if (!file) return;
-
-      if (file.type !== "application/pdf" && !file.name.toLowerCase().endsWith('.pdf')) {
-        alert("⚠️ Invalid file format! Only PDF files are allowed.");
-        fileInput.value = '';
-        return;
-      }
-
-      const minSize = 10 * 1024;  
-      const maxSize = 900 * 1024; 
-
-      if (file.size < minSize || file.size > maxSize) {
-        const fileSizeKB = (file.size / 1024).toFixed(1);
-        alert(`⚠️ Invalid file size (${fileSizeKB} KB)!\n\nThe attached ID proof PDF must be between 10 KB and 900 KB.`);
-        fileInput.value = '';
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        base64Input.value = evt.target.result;
-        fileNameInput.value = file.name;
-        statusText.innerHTML = `<span class="text-emerald-600 font-semibold"><i class="fa-solid fa-circle-check"></i> Attached: ${file.name} (${(file.size / 1024).toFixed(1)} KB)</span>`;
-        removeBtn.classList.remove('hidden');
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function removeAttachedIdProof() {
-      document.getElementById('cust-id-file').value = '';
-      document.getElementById('cust-id-file-base64').value = '';
-      document.getElementById('cust-id-file-name').value = '';
-      document.getElementById('cust-id-file-status').innerText = 'No PDF document attached.';
-      document.getElementById('cust-id-file-remove').classList.add('hidden');
-    }
-
-    function openPdfAttachment(base64Data) {
-      if (!base64Data) {
-        alert("No ID Proof attached!");
-        return;
-      }
-      const win = window.open();
-      if (win) {
-        win.document.write(`<iframe src="${base64Data}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`);
-      } else {
-        alert("Please allow popups to view attached PDF document.");
       }
     }
 
@@ -1631,7 +1569,7 @@
           "Contact No": b.contactNo || "",
           "Country Code": b.countryCode || "",
           "ID Number": b.idNo || "",
-          "Attached ID File Name": b.idProofFileName || "",
+          "Attached ID Link": b.idProofLink || b.idProofBase64 || "",
           "Address": b.address || "",
           "City": b.city || "",
           "State": b.state || "",
@@ -2723,7 +2661,6 @@
       
       const form = document.getElementById('booking-form');
       form.reset();
-      removeAttachedIdProof();
       
       const clearBillInput = document.getElementById('cust-clear-bill');
       if (clearBillInput) clearBillInput.value = 0;
@@ -2840,14 +2777,8 @@
         document.getElementById('cust-id').value = b.idNo || '';
         document.getElementById('cust-country-code').value = b.countryCode || '+91';
         document.getElementById('cust-contact').value = b.contactNo || '';
+        document.getElementById('cust-id-link').value = b.idProofLink || b.idProofBase64 || ''; // fallback check just in case legacy base64 exists
 
-        if (b.idProofBase64) {
-          document.getElementById('cust-id-file-base64').value = b.idProofBase64;
-          document.getElementById('cust-id-file-name').value = b.idProofFileName || 'Attached_ID_Proof.pdf';
-          document.getElementById('cust-id-file-status').innerHTML = `<span class="text-emerald-600 font-semibold"><i class="fa-solid fa-circle-check"></i> Attached: ${b.idProofFileName || 'Attached_ID_Proof.pdf'}</span>`;
-          document.getElementById('cust-id-file-remove').classList.remove('hidden');
-        }
-        
         populateRoomDropdown(b.roomNo);
         populateAgentDropdown(b.agentInfo);
         document.getElementById('cust-capacity').value = b.capacity || 1;
@@ -2985,6 +2916,7 @@
         // SET DEFAULT CHECK-IN AND CHECK-OUT TIME TO 11:00 AM FOR NEW BOOKING
         document.getElementById('cust-checkin-time').value = "11:00";
         document.getElementById('cust-checkout-time').value = "11:00";
+        document.getElementById('cust-id-link').value = "";
 
         if (extraPersonsInput) extraPersonsInput.value = 0;
         
@@ -3486,8 +3418,7 @@
         idNo: document.getElementById('cust-id').value.trim(),
         countryCode: countryCodeVal,
         contactNo: contactNoVal,
-        idProofBase64: document.getElementById('cust-id-file-base64').value,
-        idProofFileName: document.getElementById('cust-id-file-name').value,
+        idProofLink: document.getElementById('cust-id-link').value.trim(), // Replaced base64 implementation
         roomNo: selectedRooms,
         agentInfo: document.getElementById('cust-agent').value,
         capacity: parseInt(document.getElementById('cust-capacity').value) || 1,
@@ -3668,11 +3599,12 @@
         `;
 
         let idProofCellHtml = `<span class="text-slate-400 italic text-[10px]">None</span>`;
-        if (b.idProofBase64) {
+        const linkVal = b.idProofLink || b.idProofBase64; // fallback for legacy data
+        if (linkVal && linkVal.startsWith('http')) {
           idProofCellHtml = `
-            <button onclick="openPdfAttachment('${b.idProofBase64}')" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-2 py-0.5 rounded-full text-[10px] font-bold flex items-center gap-1 transition">
-              <i class="fa-solid fa-file-pdf text-rose-600"></i> View PDF
-            </button>
+            <a href="${linkVal}" target="_blank" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-2 py-0.5 rounded-full text-[10px] font-bold flex items-center gap-1 w-max transition">
+              <i class="fa-brands fa-google-drive text-rose-600"></i> View Link
+            </a>
           `;
         }
 
