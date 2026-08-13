@@ -1,3 +1,5 @@
+
+
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -169,15 +171,46 @@
     </div>
   </div>
 
+  <!-- MANUAL LOGOUT CONFIRM MODAL -->
+  <div id="logout-confirm-modal" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-md flex items-center justify-center p-4 no-print">
+    <div class="bg-white rounded-3xl shadow-xl border border-slate-100 max-w-xs w-full p-5 space-y-3 text-center">
+      <div class="bg-rose-50 text-rose-600 w-10 h-10 rounded-2xl flex items-center justify-center mx-auto text-lg">
+        <i class="fa-solid fa-right-from-bracket"></i>
+      </div>
+      <div>
+        <h3 class="text-xs font-bold text-slate-900">Confirm Logout</h3>
+        <p class="text-[10px] text-slate-500 mt-1">Are you sure you want to log out? All your latest changes will be saved securely before exiting.</p>
+      </div>
+      <div class="flex space-x-2 pt-2">
+        <button type="button" onclick="cancelLogout()" class="w-1/2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2 rounded-xl text-[11px] transition">Cancel</button>
+        <button type="button" onclick="processLogoutWithSave()" class="w-1/2 bg-rose-600 hover:bg-rose-700 text-white font-bold py-2 rounded-xl shadow-sm transition text-[11px]">Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SAVING LOCK MODAL (SAND TIMER) -->
+  <div id="saving-lock-modal" class="hidden fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4 no-print cursor-wait">
+    <div class="bg-white rounded-3xl shadow-2xl border border-slate-100 max-w-sm w-full p-6 text-center space-y-4">
+      <div class="text-blue-600 text-5xl animate-bounce">
+        ⏳
+      </div>
+      <div>
+        <h3 class="text-lg font-black text-slate-900">Saving & Logging Out...</h3>
+        <p class="text-xs text-rose-600 mt-2 font-bold uppercase">Do not close window or shutdown!</p>
+        <p class="text-[10px] text-slate-500 mt-1">Please wait while we secure your data.</p>
+      </div>
+    </div>
+  </div>
+
   <!-- SESSION AUTO LOGOUT WARNING MODAL -->
-  <div id="logout-warning-modal" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-md flex items-center justify-center p-4">
+  <div id="logout-warning-modal" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-md flex items-center justify-center p-4 no-print">
     <div class="bg-white rounded-3xl shadow-xl border border-slate-100 max-w-xs w-full p-5 space-y-3 text-center">
       <div class="bg-amber-50 text-amber-600 w-10 h-10 rounded-2xl flex items-center justify-center mx-auto text-lg">
         <i class="fa-solid fa-hourglass-half"></i>
       </div>
       <div>
         <h3 class="text-xs font-bold text-slate-900">Inactivity Timeout Warning</h3>
-        <p class="text-[10px] text-slate-500 mt-1">You will be logged out automatically in <strong id="logout-countdown-seconds" class="text-rose-600">60</strong> seconds due to inactivity.</p>
+        <p class="text-[10px] text-slate-500 mt-1">You will be logged out automatically in <strong id="logout-countdown-seconds" class="text-rose-600">60</strong> seconds due to inactivity. Data will be saved securely.</p>
       </div>
       <button onclick="resetInactivityTimer()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-xl text-[11px] transition shadow-sm">
         Stay Logged In
@@ -1075,7 +1108,7 @@
       }
     }
 
-    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzvFdRB-rD_eZW-yl2gitJ3BZK0RjrPl1xmc79Q6ISE01k9lZNgp3itWRnuAviK1de74Q/exec"; 
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbx1y0ZQcPX9v66ddWlU8B5xCnOpgGvld39iY3EVNzKQ9tcNcod2onajvq0fM2p6pqExqQ/exec"; 
     
     const ONE_HOUR_MS = 1 * 60 * 60 * 1000;
     let activeModalBooking = null;
@@ -1346,23 +1379,38 @@
       }
     }
 
-    function logoutUser(skipSavePrompt = false) {
-      if (isLoggedIn && !skipSavePrompt) {
-        const confirmLogout = confirm("Are you sure you want to log out?");
-        if (!confirmLogout) {
-          return; // Abort logout process if Cancel is clicked
-        }
-        if (confirm("Please save your data before logout! Do you want to save changes now?")) {
-          saveChanges();
+    function logoutUser(isAuto = false) {
+      if (isAuto) {
+         processLogoutWithSave();
+      } else {
+         document.getElementById('logout-confirm-modal').classList.remove('hidden');
+      }
+    }
+    
+    function cancelLogout() {
+      document.getElementById('logout-confirm-modal').classList.add('hidden');
+      resetInactivityTimer();
+    }
+    
+    async function processLogoutWithSave() {
+      document.getElementById('logout-warning-modal').classList.add('hidden');
+      document.getElementById('logout-confirm-modal').classList.add('hidden');
+      
+      if (isLoggedIn) {
+        document.getElementById('saving-lock-modal').classList.remove('hidden');
+        try {
+          await saveChanges(true, true);
+        } catch (e) {
+          console.error("Save on logout error", e);
         }
       }
+      
       isLoggedIn = false;
       isMasterUnlocked = false;
       sessionStorage.removeItem('app_authenticated');
       stopInactivityMonitoring();
-      document.getElementById('logout-warning-modal').classList.add('hidden');
-      document.getElementById('login-password').value = '';
-      document.getElementById('login-overlay').classList.remove('hidden');
+      
+      window.location.reload();
     }
 
     function openMasterAuthModal() {
@@ -1561,46 +1609,57 @@
         return;
       }
 
+      const now = new Date().getTime();
+
       const exportData = filteredBookings.map(b => {
+        let bStatus = "Unknown";
+        if (isInactiveBooking(b)) {
+            bStatus = "Inactive";
+        } else {
+            const cIn = parseDateMs(b.checkIn);
+            const cOut = getEffectiveCheckoutTime(b);
+            if (now > cOut) bStatus = "Closed";
+            else if (now >= cIn && now <= cOut) bStatus = "Live";
+            else bStatus = "Upcoming";
+        }
+        
         return {
-          id: b.id || "",
-          bookingCode: b.bookingCode || "",
-          invoiceNo: b.invoiceNo || "",
-          name: b.name || "",
-          address: b.address || "",
-          city: b.city || "",
-          state: b.state || "",
-          country: b.country || "",
-          zipCode: b.zipCode || "",
-          idNo: b.idNo || "",
-          countryCode: b.countryCode || "",
-          contactNo: b.contactNo || "",
-          idProofBase64: b.idProofBase64 ? "Attached" : "",
-          idProofFileName: b.idProofFileName || "",
-          roomNo: getBookingRooms(b).join(", "),
-          agentInfo: b.agentInfo || "",
-          capacity: b.capacity || 1,
-          extraPersons: b.extraPersons || 0,
-          extraPersonJoined: b.extraPersonJoined || "",
-          extraPersonOut: b.extraPersonOut || "",
-          extraPersonDays: b.extraPersonDays || 0,
-          checkIn: b.checkIn || "",
-          checkOut: b.checkOut || "",
-          hasExtendedCheckout: isTrue(b.hasExtendedCheckout),
-          extendedCheckOut: b.extendedCheckOut || "",
-          includeMeals: b.includeMeals !== false && b.includeMeals !== 'false',
-          noOfDays: b.noOfDays || 0,
-          perDayPrice: b.perDayPrice || 0,
-          foodOrders: b.foodOrders ? (typeof b.foodOrders === 'string' ? b.foodOrders : JSON.stringify(b.foodOrders)) : "",
-          cabFare: b.cabFare || 0,
-          cabRemark: b.cabRemark || "",
-          cabTrips: b.cabTrips ? (typeof b.cabTrips === 'string' ? b.cabTrips : JSON.stringify(b.cabTrips)) : "",
-          totalAmount: b.totalAmount || 0,
-          initialAdv: b.initialAdv || 0,
-          clearedDue: b.clearedDue || 0,
-          advanced: b.advanced || 0,
-          totalDue: b.totalDue || 0,
-          inactive: isInactiveBooking(b)
+          "Booking ID (System)": b.id || "",
+          "Booking ID": b.bookingCode || "",
+          "Invoice ID": b.invoiceNo || "",
+          "Booking Status": bStatus,
+          "Guest Name": b.name || "",
+          "Contact No": b.contactNo || "",
+          "Country Code": b.countryCode || "",
+          "ID Number": b.idNo || "",
+          "Attached ID File Name": b.idProofFileName || "",
+          "Address": b.address || "",
+          "City": b.city || "",
+          "State": b.state || "",
+          "Country": b.country || "",
+          "Pin/Zip Code": b.zipCode || "",
+          "Room No(s)": getBookingRooms(b).join(", "),
+          "Capacity": b.capacity || 1,
+          "Extra Persons": b.extraPersons || 0,
+          "Extra Person Joined": b.extraPersonJoined || "",
+          "Extra Person Check-Out": b.extraPersonOut || "",
+          "Extra Person Days": b.extraPersonDays || 0,
+          "Agent Info": b.agentInfo || "",
+          "Check-In": b.checkIn || "",
+          "Check-Out": b.checkOut || "",
+          "Has Extended Check-Out": isTrue(b.hasExtendedCheckout) ? "Yes" : "No",
+          "Extended Check-Out": b.extendedCheckOut || "",
+          "Include Meals": (b.includeMeals !== false && b.includeMeals !== 'false') ? "Yes" : "No",
+          "Stay Days": b.noOfDays || 0,
+          "Price / Day": b.perDayPrice || 0,
+          "Food Orders (JSON)": b.foodOrders ? (typeof b.foodOrders === 'string' ? b.foodOrders : JSON.stringify(b.foodOrders)) : "",
+          "Cab Fare": b.cabFare || 0,
+          "Cab Remark": b.cabRemark || "",
+          "Total Amount": b.totalAmount || 0,
+          "Initial Advance": b.initialAdv || 0,
+          "Cleared Due": b.clearedDue || 0,
+          "Advance Paid": b.advanced || 0,
+          "Balance Due": b.totalDue || 0
         };
       });
 
@@ -1797,6 +1856,15 @@
       setInterval(triggerPeriodicAutoSave, 300000);
     });
 
+    function refreshDynamicUI() {
+      if (document.getElementById('tab-booking') && !document.getElementById('tab-booking').classList.contains('hidden')) {
+        renderBookingsTable(document.getElementById('booking-date-search').value);
+      }
+      if (document.getElementById('tab-dashboard') && !document.getElementById('tab-dashboard').classList.contains('hidden')) {
+        updateDashboardCards();
+      }
+    }
+
     function triggerPeriodicAutoSave() {
       saveChanges(true, true);
     }
@@ -1900,6 +1968,7 @@
       }
 
       renderAlertModalList(alertBookings);
+      refreshDynamicUI();
     }
 
     function renderAlertModalList(alertList) {
