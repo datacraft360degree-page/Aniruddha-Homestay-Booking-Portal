@@ -1,3 +1,5 @@
+
+
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -1083,8 +1085,9 @@
           body: JSON.stringify(payload)
         });
 
-        // Reset local state (Default Room Capacity Room 1 to 5: 4,2,4,4,4 & Agent Directory to Self/Direct)
+        // Reset local state
         state.bookings = [];
+        state.yearlyCounters = {}; // Clears the sequence counter to start fresh IDs from 01
         state.roomsCapacity = [
           { roomNo: 1, capacity: 4 },
           { roomNo: 2, capacity: 2 },
@@ -1121,7 +1124,7 @@
 
     function formatTitleCase(text) {
       if (!text) return '';
-      return text.replace(/\w\S*/g, function(txt) {
+      return String(text).replace(/\w\S*/g, function(txt) {
         return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
       });
     }
@@ -1774,7 +1777,8 @@
       
       state.selectedYear = defaultAppYear;
       state.dashSelectedYear = defaultAppYear;
-      if (!state.yearlyCounters) {
+      
+      if (!state.yearlyCounters || Object.keys(state.yearlyCounters).length === 0) {
         state.yearlyCounters = { [defaultAppYear]: state.bookings.length || 0 };
       }
 
@@ -1817,16 +1821,9 @@
       const checkInInput = document.getElementById('cust-checkin-date');
       const checkOutInput = document.getElementById('cust-checkout-date');
       const extDateInput = document.getElementById('cust-ext-checkout-date');
-      const bookingModalId = document.getElementById('modal-booking-id')?.value;
       
-      if (!bookingModalId) {
-        const today = new Date().toISOString().split('T')[0];
-        if (checkInInput) checkInInput.min = today;
-        if (checkOutInput) checkOutInput.min = today;
-      } else {
-        if (checkInInput) checkInInput.removeAttribute('min');
-        if (checkOutInput) checkOutInput.removeAttribute('min');
-      }
+      if (checkInInput) checkInInput.removeAttribute('min');
+      if (checkOutInput) checkOutInput.removeAttribute('min');
 
       if (checkOutInput && extDateInput) {
         extDateInput.min = checkOutInput.value;
@@ -2277,8 +2274,8 @@
       }
 
       const b = activeModalBooking;
-      let rawCountryCode = b.countryCode ? b.countryCode.replace(/\D/g, '') : '91';
-      let phone = b.contactNo ? b.contactNo.replace(/\D/g, '') : '';
+      let rawCountryCode = b.countryCode ? String(b.countryCode).replace(/\D/g, '') : '91';
+      let phone = b.contactNo ? String(b.contactNo).replace(/\D/g, '') : '';
       
       let validationErrors = [];
       if (!phone || phone.length !== 10) {
@@ -2352,7 +2349,7 @@
           waBtn.classList.add('hidden');
         } else {
           waBtn.classList.remove('hidden');
-          const contactDigits = b.contactNo ? b.contactNo.replace(/\D/g, '') : '';
+          const contactDigits = b.contactNo ? String(b.contactNo).replace(/\D/g, '') : '';
           const hasValidContact = contactDigits.length === 10;
           const hasAdvanced = (parseFloat(b.advanced) || 0) > 0;
 
@@ -2738,18 +2735,7 @@
       populateAgentDropdown();
 
       setSectionEditability('sec-guest-info', !isClosedAndWithin3Days);
-
-      if (isUpcomingBooking) {
-        setSectionEditability('sec-room-dates', true);
-      } else if (isLiveBooking) {
-        setSectionEditability('sec-room-dates', true);
-        setInputEnabled(document.getElementById('cust-checkin-date'), false);
-        setInputEnabled(document.getElementById('cust-checkin-time'), false);
-        setInputEnabled(document.getElementById('cust-checkout-date'), false);
-        setInputEnabled(document.getElementById('cust-checkout-time'), false);
-      } else if (isClosedAndWithin3Days) {
-        setSectionEditability('sec-room-dates', false);
-      }
+      setSectionEditability('sec-room-dates', !isClosedAndWithin3Days);
 
       const extChkBox = document.getElementById('cust-has-extended-checkout');
       const extDateInput = document.getElementById('cust-ext-checkout-date');
@@ -2817,15 +2803,15 @@
       const extraPersonOutDateInput = document.getElementById('cust-extra-person-out-date');
       const extraPersonOutTimeInput = document.getElementById('cust-extra-person-out-time');
 
-      if (extraPersonsInput) {
-        setInputEnabled(extraPersonsInput, isLiveBooking || isUpcomingBooking);
-      }
-      if (extraPersonDateInput) setInputEnabled(extraPersonDateInput, isLiveBooking || isUpcomingBooking);
-      if (extraPersonTimeInput) setInputEnabled(extraPersonTimeInput, isLiveBooking || isUpcomingBooking);
-      if (extraPersonOutDateInput) setInputEnabled(extraPersonOutDateInput, isLiveBooking || isUpcomingBooking);
-      if (extraPersonOutTimeInput) setInputEnabled(extraPersonOutTimeInput, isLiveBooking || isUpcomingBooking);
+      // Extra person inputs remain fully editable for any saved booking (unless > 3 days closed)
+      const canEditExtras = !isClosedAndWithin3Days;
+      if (extraPersonsInput) setInputEnabled(extraPersonsInput, canEditExtras);
+      if (extraPersonDateInput) setInputEnabled(extraPersonDateInput, canEditExtras);
+      if (extraPersonTimeInput) setInputEnabled(extraPersonTimeInput, canEditExtras);
+      if (extraPersonOutDateInput) setInputEnabled(extraPersonOutDateInput, canEditExtras);
+      if (extraPersonOutTimeInput) setInputEnabled(extraPersonOutTimeInput, canEditExtras);
 
-      if (isLiveBooking || isUpcomingBooking) {
+      if (canEditExtras) {
         if (extraPersonTimeWrapper) extraPersonTimeWrapper.classList.remove('hidden');
       } else {
         if (extraPersonTimeWrapper && (!b || !b.extraPersons || b.extraPersons <= 0)) {
@@ -2839,6 +2825,12 @@
         document.getElementById('modal-title').innerText = isClosedAndWithin3Days 
           ? 'Closed Booking (Billing Active)' 
           : 'Edit Booking Details';
+        
+        // ** LOCK MAIN CHECK-IN AND CHECK-OUT DATES IF BOOKING IS ALREADY CREATED **
+        setInputEnabled(document.getElementById('cust-checkin-date'), false);
+        setInputEnabled(document.getElementById('cust-checkin-time'), false);
+        setInputEnabled(document.getElementById('cust-checkout-date'), false);
+        setInputEnabled(document.getElementById('cust-checkout-time'), false);
         
         document.getElementById('modal-booking-id').value = b.id;
         document.getElementById('cust-name').value = formatTitleCase(b.name);
@@ -2960,18 +2952,28 @@
         document.getElementById('modal-title').innerText = 'Add New Booking';
         document.getElementById('modal-booking-id').value = '';
         
+        // DO NOT lock the fields if adding a new booking
+        setInputEnabled(document.getElementById('cust-checkin-date'), true);
+        setInputEnabled(document.getElementById('cust-checkin-time'), true);
+        setInputEnabled(document.getElementById('cust-checkout-date'), true);
+        setInputEnabled(document.getElementById('cust-checkout-time'), true);
+
         populateRoomDropdown(state.roomsCapacity.length > 0 ? [state.roomsCapacity[0].roomNo] : []);
 
         document.getElementById('cust-country-code').value = "+91";
-        document.getElementById('cust-checkin-time').value = "";
-        document.getElementById('cust-checkout-time').value = "";
+
+        // SET DEFAULT CHECK-IN AND CHECK-OUT TIME TO 11:00 AM FOR NEW BOOKING
+        document.getElementById('cust-checkin-time').value = "11:00";
+        document.getElementById('cust-checkout-time').value = "11:00";
 
         if (extraPersonsInput) extraPersonsInput.value = 0;
         
         if (extraPersonDateInput) extraPersonDateInput.value = "";
-        if (extraPersonTimeInput) extraPersonTimeInput.value = "";
+        
+        // SET EXTRA PERSON DEFAULT TIMES TO 11:00 AM FOR NEW BOOKING
+        if (extraPersonTimeInput) extraPersonTimeInput.value = "11:00";
         if (extraPersonOutDateInput) extraPersonOutDateInput.value = "";
-        if (extraPersonOutTimeInput) extraPersonOutTimeInput.value = "";
+        if (extraPersonOutTimeInput) extraPersonOutTimeInput.value = "11:00";
 
         extChkBox.checked = false;
         extChkBox.disabled = true;
@@ -3055,9 +3057,7 @@
         const mainInFull = new Date(`${mainInDate}T${mainInTime}`);
 
         if (epInFull < mainInFull) {
-          alert(`⚠️ Additional person check-in cannot be earlier than the main check-in (${formatDateTime(mainInFull.toISOString())}).`);
-          epInDateElem.value = mainInDate;
-          epInTimeElem.value = mainInTime;
+          alert(`⚠️ Additional person check-in cannot be earlier than the main check-in (${formatDateTime(mainInFull.toISOString())}). Please correct it.`);
         }
       }
 
@@ -3066,9 +3066,7 @@
         const mainOutFull = new Date(`${latestOutD}T${latestOutT}`);
 
         if (epOutFull > mainOutFull) {
-          alert(`⚠️ Additional person check-out date cannot be later than the main/extended check-out date (${formatDateTime(mainOutFull.toISOString())}).`);
-          epOutDateElem.value = latestOutD;
-          epOutTimeElem.value = latestOutT;
+          alert(`⚠️ Additional person check-out date cannot be later than the main/extended check-out date (${formatDateTime(mainOutFull.toISOString())}). Please correct it.`);
         }
       }
       
@@ -3076,7 +3074,6 @@
     }
 
     function handleStayDatesChange() {
-      const bookingModalId = document.getElementById('modal-booking-id')?.value;
       const outDateInput = document.getElementById('cust-checkout-date');
       const extDateInput = document.getElementById('cust-ext-checkout-date');
 
@@ -3085,20 +3082,6 @@
         if (extDateInput.value && extDateInput.value < outDateInput.value) {
           alert("⚠️ Extended Check-Out date cannot be prior to the initial Check-Out date!");
           extDateInput.value = outDateInput.value;
-        }
-      }
-
-      if (!bookingModalId) {
-        const today = new Date().toISOString().split('T')[0];
-        const inDateInput = document.getElementById('cust-checkin-date');
-
-        if (inDateInput.value && inDateInput.value < today) {
-          alert("⚠️ Check-In date cannot be prior to the current date!");
-          inDateInput.value = today;
-        }
-        if (outDateInput.value && outDateInput.value < today) {
-          alert("⚠️ Check-Out date cannot be prior to the current date!");
-          outDateInput.value = today;
         }
       }
 
@@ -3239,19 +3222,12 @@
         return;
       }
 
-      const today = new Date().toISOString().split('T')[0];
       const inDate = document.getElementById('cust-checkin-date').value;
       const outDate = document.getElementById('cust-checkout-date').value;
       const inTime = document.getElementById('cust-checkin-time').value || '00:00';
       const outTime = document.getElementById('cust-checkout-time').value || '00:00';
 
       const bookingModalId = document.getElementById('modal-booking-id').value;
-
-      if (!bookingModalId && inDate < today) {
-        alert("⚠️ Cannot book new entry before today’s date!");
-        return;
-      }
-
       const id = bookingModalId;
       
       let selectedRooms = getSelectedRooms();
