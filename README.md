@@ -1039,6 +1039,19 @@
       return d.getTime();
     }
     
+    // NEW helper logic to format dates strictly into 24-hour style "dd/mm/yy hh:mm" for Excel exports
+    function format24hDate(dtStr) {
+      if (!dtStr) return '';
+      const d = new Date(typeof dtStr === 'string' ? dtStr.replace(' ', 'T') : dtStr);
+      if (isNaN(d.getTime())) return String(dtStr);
+      const dd = String(d.getDate()).padStart(2, '0');
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const yy = String(d.getFullYear()).slice(-2);
+      const hh = String(d.getHours()).padStart(2, '0');
+      const min = String(d.getMinutes()).padStart(2, '0');
+      return `${dd}/${mm}/${yy} ${hh}:${min}`;
+    }
+    
     function checkSheetRowLimits() {
       const currentRowCount = state.bookings.length; 
       
@@ -1078,10 +1091,18 @@
 
       try {
         const payload = { action: "wipeData" };
-        await fetch(GAS_API_URL, {
+        const response = await fetch(GAS_API_URL, {
           method: "POST",
           body: JSON.stringify(payload)
         });
+
+        // Try reading error text first safely to avoid JSON parse errors
+        const textResult = await response.text();
+        try {
+            JSON.parse(textResult);
+        } catch(e) {
+            console.error("Wipe format warning:", textResult);
+        }
 
         // Reset local state
         state.bookings = [];
@@ -1640,20 +1661,20 @@
           "Room No(s)": getBookingRooms(b).join(", "),
           "Capacity": b.capacity || 1,
           "Extra Persons": b.extraPersons || 0,
-          "Extra Person Joined": b.extraPersonJoined || "",
-          "Extra Person Check-Out": b.extraPersonOut || "",
+          "Extra Person Joined": format24hDate(b.extraPersonJoined),
+          "Extra Person Check-Out": format24hDate(b.extraPersonOut),
           "Extra Person Days": b.extraPersonDays || 0,
           "Agent Info": b.agentInfo || "",
-          "Check-In": b.checkIn || "",
-          "Check-Out": b.checkOut || "",
+          "Check-In": format24hDate(b.checkIn),
+          "Check-Out": format24hDate(b.checkOut),
           "Has Extended Check-Out": isTrue(b.hasExtendedCheckout) ? "Yes" : "No",
-          "Extended Check-Out": b.extendedCheckOut || "",
+          "Extended Check-Out": format24hDate(b.extendedCheckOut),
           "Include Meals": (b.includeMeals !== false && b.includeMeals !== 'false') ? "Yes" : "No",
           "Stay Days": b.noOfDays || 0,
           "Price / Day": b.perDayPrice || 0,
-          "Food Orders (JSON)": b.foodOrders ? (typeof b.foodOrders === 'string' ? b.foodOrders : JSON.stringify(b.foodOrders)) : "",
-          "Cab Fare": b.cabFare || 0,
-          "Cab Remark": b.cabRemark || "",
+          "Food Orders Details": b.foodOrders ? (Array.isArray(b.foodOrders) ? b.foodOrders.map(f => `${f.foodDesc} (${format24hDate(f.foodDateTime)}): ${f.plates} pl @ ₹${f.itemPrice} = ₹${f.foodCharge}`).join('\n') : "") : "",
+          "Cab Trips Details": b.cabTrips ? (Array.isArray(b.cabTrips) ? b.cabTrips.map(c => `${c.tripName} (${format24hDate(c.dateTime)}): ₹${c.rate} ${c.remark ? `[${c.remark}]` : ''}`).join('\n') : "") : "",
+          "Total Cab Fare": b.cabFare || 0,
           "Total Amount": b.totalAmount || 0,
           "Initial Advance": b.initialAdv || 0,
           "Cleared Due": b.clearedDue || 0,
@@ -1799,7 +1820,15 @@
 
       try {
         const response = await fetch(GAS_API_URL + "?action=fetchData");
-        const sheetData = await response.json();
+        const textData = await response.text();
+        
+        let sheetData;
+        try {
+            sheetData = JSON.parse(textData);
+        } catch(err) {
+            console.error("JSON Error: Sync issue.", textData);
+            throw new Error("Invalid response format from server (Sync Failed).");
+        }
         
         if (sheetData && sheetData.bookings) {
           state = sheetData;
@@ -1886,7 +1915,14 @@
           body: JSON.stringify(payload)
         });
 
-        const result = await response.json();
+        const textResult = await response.text();
+        let result;
+        try {
+            result = JSON.parse(textResult);
+        } catch(e) {
+            console.error("Save JSON error", textResult);
+            throw new Error("Invalid response format received from server.");
+        }
 
         if (result.status === "success") {
           if (!quiet) {
@@ -3157,10 +3193,10 @@
       let latestMainCheckoutDt = null;
 
       if (inDate && outDate) {
-        const d1 = new Date(`${inDate}T${inTime}`);
         latestMainCheckoutDt = new Date(`${outDate}T${outTime}`);
-        const diff = latestMainCheckoutDt - d1;
-        days = Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+        const inDateOnly = new Date(inDate);
+        const outDateOnly = new Date(outDate);
+        days = Math.max(1, Math.round((outDateOnly - inDateOnly) / (1000 * 60 * 60 * 24)));
       }
 
       const price = parseFloat(document.getElementById('cust-price').value) || 0;
@@ -3181,11 +3217,14 @@
 
           if (epOutDt > latestMainCheckoutDt) {
             epOutDt = new Date(latestMainCheckoutDt.getTime());
+            epOutDate = epOutDt.toISOString().split('T')[0];
           }
 
           if (epInDt < epOutDt) {
-            const epDiff = epOutDt - epInDt;
-            extraPersonDays = Math.max(1, Math.ceil(epDiff / (1000 * 60 * 60 * 24)));
+            const epInOnly = new Date(epInDate);
+            const epOutOnly = new Date(epOutDate);
+            const diffDays = Math.round((epOutOnly - epInOnly) / (1000 * 60 * 60 * 24));
+            extraPersonDays = Math.max(1, diffDays);
           } else {
             extraPersonDays = 0;
           }
@@ -3342,10 +3381,13 @@
           alert(`⚠️ Additional Person Check-Out date & time cannot exceed main/extended Check-Out date & time (${formatDateTime(latestCheckoutStr)}).`);
           extraPersonOut = latestCheckoutStr;
           epOutDt = latestCheckoutDt;
+          epOutDate = epOutDt.toISOString().split('T')[0];
         }
 
         if (epInDt < epOutDt) {
-          extraPersonDays = Math.max(1, Math.ceil((epOutDt - epInDt) / (1000 * 60 * 60 * 24)));
+          const epInOnly = new Date(epDate);
+          const epOutOnly = new Date(epOutDate);
+          extraPersonDays = Math.max(1, Math.round((epOutOnly - epInOnly) / (1000 * 60 * 60 * 24)));
         }
       }
 
@@ -3983,4 +4025,3 @@
   </script>
 </body>
 </html>
-
