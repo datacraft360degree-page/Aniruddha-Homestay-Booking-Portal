@@ -110,6 +110,33 @@
     </div>
   </div>
 
+ <!-- POST-LOGIN INSTRUCTION MODAL -->
+  <div id="post-login-modal" class="hidden fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4 no-print">
+    <div class="bg-white rounded-3xl shadow-2xl border border-blue-100 max-w-md w-full p-6 space-y-4 text-left relative">
+      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+        <h3 class="text-sm font-black text-blue-600 flex items-center gap-2">
+          <i class="fa-solid fa-circle-info text-blue-500"></i> Important Instructions
+        </h3>
+        <button onclick="closePostLoginModal()" class="text-slate-400 hover:text-rose-500 transition text-lg"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="text-[11px] text-slate-700 space-y-2">
+        <ol class="list-decimal pl-4 space-y-2 font-medium">
+          <li>Do not Wipe out data if you didn’t take backup.</li>
+          <li>If you are starting new then clean your browser history once.</li>
+          <li>Always save data before leaving the Portal.</li>
+          <li>Do not close window, tab or refresh if data is not saved.</li>
+          <li>Without logout do not close the browser or window or tab for data saving error.</li>
+          <li>Download data in excel once in a week for backup.</li>
+        </ol>
+      </div>
+      <div class="pt-3 border-t border-slate-100 flex justify-end">
+        <button onclick="closePostLoginModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-5 rounded-xl shadow-sm transition text-xs">
+          I Understand
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- MASTER DATA ACCESS PASSWORD MODAL -->
   <div id="master-auth-modal" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-md flex items-center justify-center p-4 no-print">
     <div class="bg-white rounded-3xl shadow-2xl border border-slate-100 max-w-xs w-full p-5 space-y-3 text-left">
