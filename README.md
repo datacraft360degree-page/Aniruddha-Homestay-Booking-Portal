@@ -127,7 +127,7 @@
         <p class="flex items-start gap-2"><i class="fa-solid fa-check text-blue-500 mt-0.5"></i> <span>2. Take backup every day or every week.</span></p>
         <p class="flex items-start gap-2"><i class="fa-solid fa-check text-blue-500 mt-0.5"></i> <span>3. Do not force close 'The Portal'; always close it using the 'Logout' option.</span></p>
         <p class="flex items-start gap-2"><i class="fa-solid fa-check text-blue-500 mt-0.5"></i> <span>4. Do not 'Login' with multiple device/multiple browser/multiple browser tab at a same time to avoid data merge.</span></p>
-        <p class="flex items-start gap-2"><i class="fa-solid fa-check text-blue-500 mt-0.5"></i> <span>5. Data save/Data fetch take little bit time so hold on ⏳.</span></p>
+        <p class="flex items-start gap-2"><i class="fa-solid fa-check text-blue-500 mt-0.5"></i> <span>5. Data save/Data fetch take little bit time so hold on â³.</span></p>
       </div>
       <button onclick="closeLoginAlertModal()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-2xl shadow-sm transition text-xs mt-2">
         I Understand, Continue
@@ -215,7 +215,7 @@
   <div id="saving-lock-modal" class="hidden fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4 no-print cursor-wait">
     <div class="bg-white rounded-3xl shadow-2xl border border-slate-100 max-w-sm w-full p-6 text-center space-y-4">
       <div class="text-blue-600 text-5xl animate-bounce">
-        ⏳
+        â³
       </div>
       <div>
         <h3 class="text-lg font-black text-slate-900">Saving & Logging Out...</h3>
@@ -378,7 +378,7 @@
     <section id="tab-dashboard" class="tab-content space-y-4">
       <div class="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-3xl p-5 text-white shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div>
-          <h2 class="text-base font-bold tracking-tight">Hi Aniruddha, Welcome to dashboard 🏠</h2>
+          <h2 class="text-base font-bold tracking-tight">Hi Aniruddha, Welcome to dashboard ð </h2>
           <p class="text-blue-100 text-[10px] mt-0.5">Quickly view, schedule, and manage room allocations and orders.</p>
         </div>
         <div class="flex items-center bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-2xl border border-white/20 space-x-2">
@@ -413,21 +413,21 @@
         <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-200/60 flex items-center justify-between">
           <div>
             <p class="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Booking Amount</p>
-            <p id="dash-total-amount" class="text-xl font-black text-slate-900 mt-0.5">₹0</p>
+            <p id="dash-total-amount" class="text-xl font-black text-slate-900 mt-0.5">â¹0</p>
           </div>
           <div class="p-3 bg-indigo-50 text-indigo-600 rounded-2xl"><i class="fa-solid fa-receipt text-base"></i></div>
         </div>
         <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-200/60 flex items-center justify-between">
           <div>
             <p class="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Amount Received</p>
-            <p id="dash-advanced" class="text-xl font-black text-emerald-600 mt-0.5">₹0</p>
+            <p id="dash-advanced" class="text-xl font-black text-emerald-600 mt-0.5">â¹0</p>
           </div>
           <div class="p-3 bg-emerald-50 text-emerald-600 rounded-2xl"><i class="fa-solid fa-wallet text-base"></i></div>
         </div>
         <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-200/60 flex items-center justify-between">
           <div>
             <p class="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Total Due Amount</p>
-            <p id="dash-due" class="text-xl font-black text-rose-600 mt-0.5">₹0</p>
+            <p id="dash-due" class="text-xl font-black text-rose-600 mt-0.5">â¹0</p>
           </div>
           <div class="p-3 bg-rose-50 text-rose-600 rounded-2xl"><i class="fa-solid fa-hand-holding-dollar text-base"></i></div>
         </div>
@@ -437,7 +437,7 @@
       <div class="hidden bg-white rounded-3xl shadow-sm border border-slate-200/60 p-4">
         <div class="mb-3 flex justify-between items-center">
           <h3 class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-            <i class="fa-solid fa-calendar-days text-blue-600"></i> Active Years Directory (2026 – 2085)
+            <i class="fa-solid fa-calendar-days text-blue-600"></i> Active Years Directory (2026 â 2085)
           </h3>
           <span class="text-[10px] text-slate-400 font-medium">Click any year to filter dashboard &amp; open year calendar</span>
         </div>
@@ -886,11 +886,11 @@
           
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-2 pb-2 border-b border-blue-200">
              <div>
-                <label class="block font-semibold text-slate-600 mb-0.5">Extra Person (₹)</label>
+                <label class="block font-semibold text-slate-600 mb-0.5">Extra Person (â¹)</label>
                 <input type="number" id="cust-extra-total" readonly="" class="w-full bg-slate-200/60 font-bold text-slate-700 border border-slate-200 rounded-xl px-2 py-1.5 cursor-not-allowed" />
              </div>
              <div>
-                <label class="block font-semibold text-slate-600 mb-0.5">Cab Fare (₹)</label>
+                <label class="block font-semibold text-slate-600 mb-0.5">Cab Fare (â¹)</label>
                 <input type="number" id="cust-cab-total" readonly="" class="w-full bg-slate-200/60 font-bold text-slate-700 border border-slate-200 rounded-xl px-2 py-1.5 cursor-not-allowed" />
              </div>
           </div>
@@ -901,23 +901,23 @@
               <input type="number" id="cust-days" readonly="" class="w-full bg-slate-200/60 font-bold text-slate-700 border border-slate-200 rounded-xl px-2 py-1.5 cursor-not-allowed" />
             </div>
             <div>
-              <label class="block font-semibold text-slate-600 mb-0.5">Price/Day (₹)</label>
+              <label class="block font-semibold text-slate-600 mb-0.5">Price/Day (â¹)</label>
               <input type="number" id="cust-price" value="1200" oninput="calculateModalBilling()" class="w-full bg-white font-bold text-slate-700 border border-slate-200 rounded-xl px-2 py-1.5 focus:outline-none focus:border-blue-500" />
             </div>
             <div>
-              <label class="block font-semibold text-slate-600 mb-0.5">Total (₹)</label>
+              <label class="block font-semibold text-slate-600 mb-0.5">Total (â¹)</label>
               <input type="number" id="cust-total" readonly="" class="w-full bg-slate-200/60 text-blue-700 font-bold border border-slate-200 rounded-xl px-2 py-1.5 cursor-not-allowed" />
             </div>
             <div>
-              <label class="block font-semibold text-slate-600 mb-0.5">Advance (₹)</label>
+              <label class="block font-semibold text-slate-600 mb-0.5">Advance (â¹)</label>
               <input type="number" id="cust-advance" value="0" oninput="calculateModalBilling()" class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 focus:outline-none focus:border-blue-500 font-semibold text-emerald-600" />
             </div>
             <div>
-              <label class="block font-semibold text-slate-600 mb-0.5">Due (₹)</label>
+              <label class="block font-semibold text-slate-600 mb-0.5">Due (â¹)</label>
               <input type="number" id="cust-due" readonly="" class="w-full bg-slate-200/60 text-rose-700 font-bold border border-slate-200 rounded-xl px-2 py-1.5 cursor-not-allowed" />
             </div>
             <div>
-              <label class="block font-semibold text-slate-600 mb-0.5 text-[10px] text-emerald-700">Clear Bill (₹)</label>
+              <label class="block font-semibold text-slate-600 mb-0.5 text-[10px] text-emerald-700">Clear Bill (â¹)</label>
               <input type="number" id="cust-clear-bill" value="0" placeholder="0" oninput="handleClearBillPayment(this.value)" class="w-full bg-emerald-50 border border-emerald-300 font-bold text-emerald-800 rounded-xl px-2 py-1.5 focus:outline-none focus:border-emerald-500" title="Put payment amount to clear due bill" />
             </div>
           </div>
@@ -996,19 +996,19 @@
         <div class="w-1/2 space-y-1 text-[10px] sm:text-[11px]">
           <div class="flex justify-between text-slate-600">
             <span>Total Amount:</span>
-            <strong id="inv-sum-total" class="text-slate-800">₹0</strong>
+            <strong id="inv-sum-total" class="text-slate-800">â¹0</strong>
           </div>
           <div class="flex justify-between text-emerald-600">
             <span>Advance Payment:</span>
-            <strong id="inv-sum-advance">₹0</strong>
+            <strong id="inv-sum-advance">â¹0</strong>
           </div>
           <div class="flex justify-between text-rose-600 font-bold border-t border-slate-200 pt-1">
             <span>Balance Due:</span>
-            <span id="inv-sum-due">₹0</span>
+            <span id="inv-sum-due">â¹0</span>
           </div>
           <div id="inv-clear-due-row" class="hidden flex justify-between text-emerald-700 font-bold border-t border-slate-100 pt-1">
             <span>Clear Due:</span>
-            <strong id="inv-sum-clear-due">₹0</strong>
+            <strong id="inv-sum-clear-due">â¹0</strong>
           </div>
         </div>
       </div>
@@ -1130,18 +1130,20 @@
       if (!fieldData) return [];
       if (Array.isArray(fieldData)) return fieldData; // Fallback for any old JSON objects
       if (typeof fieldData === 'string') {
+        // Safe check for previous JSON arrays just in case
         if (fieldData.trim().startsWith('[') || fieldData.trim().startsWith('{')) {
           try { return JSON.parse(fieldData); } catch(e) {}
         }
+        // Handle new Tabular Format extraction
         if (fieldData.includes('Trip Name | Date | Time | Rate | Remark')) {
           const lines = fieldData.trim().split('\n').slice(1);
-          return lines.map((line, idx) => {
+          return lines.map(line => {
             const parts = line.split(' | ');
             if (parts.length >= 4) {
               const dateStr = parts[1] ? parts[1].trim() : '';
               const timeStr = parts[2] ? parts[2].trim() : '';
               return {
-                tripName: parts[0] ? parts[0].trim() : `Cab Trip ${idx + 1}`,
+                tripName: parts[0] ? parts[0].trim() : '',
                 dateStr: dateStr,
                 timeStr: timeStr,
                 dateTime: (dateStr && timeStr) ? `${dateStr}T${timeStr}:00+05:30` : '',
@@ -1200,6 +1202,7 @@
           body: JSON.stringify(payload)
         });
 
+        // Try reading error text first safely to avoid JSON parse errors
         const textResult = await response.text();
         try {
             JSON.parse(textResult);
@@ -1207,8 +1210,9 @@
             console.error("Wipe format warning:", textResult);
         }
 
+        // Reset local state
         state.bookings = [];
-        state.yearlyCounters = {}; 
+        state.yearlyCounters = {}; // Clears the sequence counter to start fresh IDs from 01
         state.roomsCapacity = [
           { roomNo: 1, capacity: 4 },
           { roomNo: 2, capacity: 2 },
@@ -1310,7 +1314,7 @@
       if (selectedDt < foodWin.minFoodDt || selectedDt > foodWin.maxFoodDt) {
         const minStr = formatDateTime(foodWin.minFoodDt);
         const maxStr = formatDateTime(foodWin.maxFoodDt);
-        alert(`⚠️ Extra Food Order time must be after 15 mins of Check-In (${minStr}) and at least 30 mins before Check-Out (${maxStr})!`);
+        alert(`â ï¸ Extra Food Order time must be after 15 mins of Check-In (${minStr}) and at least 30 mins before Check-Out (${maxStr})!`);
         
         const targetDt = selectedDt < foodWin.minFoodDt ? foodWin.minFoodDt : foodWin.maxFoodDt;
         
@@ -1339,7 +1343,7 @@
       if (!file) return;
 
       if (file.type !== "application/pdf" && !file.name.toLowerCase().endsWith('.pdf')) {
-        alert("⚠️ Invalid file format! Only PDF files are allowed.");
+        alert("â ï¸ Invalid file format! Only PDF files are allowed.");
         fileInput.value = '';
         return;
       }
@@ -1349,7 +1353,7 @@
 
       if (file.size < minSize || file.size > maxSize) {
         const fileSizeKB = (file.size / 1024).toFixed(1);
-        alert(`⚠️ Invalid file size (${fileSizeKB} KB)!\n\nThe attached ID proof PDF must be between 10 KB and 900 KB.`);
+        alert(`â ï¸ Invalid file size (${fileSizeKB} KB)!\n\nThe attached ID proof PDF must be between 10 KB and 900 KB.`);
         fileInput.value = '';
         return;
       }
@@ -1701,15 +1705,15 @@
       const endInput = document.getElementById('export-end-date');
 
       if (startInput.value && (startInput.value < minDate || startInput.value > maxDate)) {
-        alert(`⚠️ Please select a Start Date between ${formatDate(minDate)} and ${formatDate(maxDate)}.`);
+        alert(`â ï¸ Please select a Start Date between ${formatDate(minDate)} and ${formatDate(maxDate)}.`);
         startInput.value = "";
       }
       if (endInput.value && (endInput.value < minDate || endInput.value > maxDate)) {
-        alert(`⚠️ Please select an End Date between ${formatDate(minDate)} and ${formatDate(maxDate)}.`);
+        alert(`â ï¸ Please select an End Date between ${formatDate(minDate)} and ${formatDate(maxDate)}.`);
         endInput.value = "";
       }
       if (startInput.value && endInput.value && startInput.value > endInput.value) {
-        alert("⚠️ Start Date cannot be after End Date.");
+        alert("â ï¸ Start Date cannot be after End Date.");
         endInput.value = "";
       }
     }
@@ -1761,7 +1765,7 @@
         const foodList = parseJSONField(b.foodOrders);
         const cabList = parseCabTrips(b.cabTrips);
         
-        const row = {
+        return {
           "Booking ID (System)": b.id || "",
           "Booking ID": b.bookingCode || "",
           "Invoice ID": b.invoiceNo || "",
@@ -1790,25 +1794,15 @@
           "Include Meals": (b.includeMeals !== false && b.includeMeals !== 'false') ? "Yes" : "No",
           "Stay Days": b.noOfDays || 0,
           "Price / Day": b.perDayPrice || 0,
-          "Food Orders Details": foodList.map(f => `${f.foodDesc} (${format24hDate(f.foodDateTime)}): ${f.plates} pl @ ₹${f.itemPrice} = ₹${f.foodCharge}`).join('\n')
+          "Food Orders Details": foodList.map(f => `${f.foodDesc} (${format24hDate(f.foodDateTime)}): ${f.plates} pl @ â¹${f.itemPrice} = â¹${f.foodCharge}`).join('\n'),
+          "Cab Trips Details": cabList.map(c => `${c.tripName} (${format24hDate(c.dateTime)}): â¹${c.rate} ${c.remark ? `[${c.remark}]` : ''}`).join('\n'),
+          "Total Cab Fare": b.cabFare || 0,
+          "Total Amount": b.totalAmount || 0,
+          "Initial Advance": b.initialAdv || 0,
+          "Cleared Due": b.clearedDue || 0,
+          "Advance Paid": b.advanced || 0,
+          "Balance Due": b.totalDue || 0
         };
-
-        // Export individual cab trip columns
-        for (let i = 1; i <= 5; i++) {
-          const trip = cabList[i - 1];
-          row[`Cab Trip ${i} Date & Time`] = trip ? format24hDate(trip.dateTime) : "";
-          row[`Cab Trip ${i} Rate/Trip`] = trip ? trip.rate || 0 : "";
-          row[`Cab Trip ${i} Remarks`] = trip ? trip.remark || "" : "";
-        }
-
-        row["Total Cab Fare"] = b.cabFare || 0;
-        row["Total Amount"] = b.totalAmount || 0;
-        row["Initial Advance"] = b.initialAdv || 0;
-        row["Cleared Due"] = b.clearedDue || 0;
-        row["Advance Paid"] = b.advanced || 0;
-        row["Balance Due"] = b.totalDue || 0;
-
-        return row;
       });
 
       const worksheet = XLSX.utils.json_to_sheet(exportData);
@@ -1865,8 +1859,8 @@
           <td class="py-2.5 px-3 font-bold text-slate-800">${b.name}</td>
           <td class="py-2.5 px-3"><span class="bg-blue-50 text-blue-700 font-bold px-2 py-0.5 rounded-full text-[10px]">Room ${roomsDisplay}</span></td>
           <td class="py-2.5 px-3 text-[10px] text-slate-600">${formatDateTime(b.checkIn)} to ${formatDateTime(effectiveOutStr)}</td>
-          <td class="py-2.5 px-3 font-semibold text-slate-800">₹${b.totalAmount}</td>
-          <td class="py-2.5 px-3 font-bold text-rose-600">₹${b.totalDue}</td>
+          <td class="py-2.5 px-3 font-semibold text-slate-800">â¹${b.totalAmount}</td>
+          <td class="py-2.5 px-3 font-bold text-rose-600">â¹${b.totalDue}</td>
           <td class="py-2.5 px-3 text-center">
             <button onclick="deleteBooking('${b.id}')" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-1 rounded-full text-[10px] font-semibold flex items-center gap-1 mx-auto transition shadow-xs">
               <i class="fa-solid fa-trash-can text-[9px]"></i> Delete Linked Booking
@@ -2156,8 +2150,8 @@
         const card = document.createElement('div');
         card.className = "bg-amber-50/60 border border-amber-200/80 rounded-2xl overflow-hidden shadow-xs";
         
-        const alertMessageText = `Checkout: <strong>${timeFormatted}</strong> | Room ${roomsDisplay} | Guest: <strong>${b.name}</strong> | Total: ₹${b.totalAmount} | Due: ₹${b.totalDue}`;
-        const alertBadgeHtml = `<span class="text-[11px] font-black text-rose-600 bg-rose-50 border border-rose-200 px-2.5 py-0.5 rounded-full">₹${b.totalDue.toLocaleString('en-IN')} Due</span>`;
+        const alertMessageText = `Checkout: <strong>${timeFormatted}</strong> | Room ${roomsDisplay} | Guest: <strong>${b.name}</strong> | Total: â¹${b.totalAmount} | Due: â¹${b.totalDue}`;
+        const alertBadgeHtml = `<span class="text-[11px] font-black text-rose-600 bg-rose-50 border border-rose-200 px-2.5 py-0.5 rounded-full">â¹${b.totalDue.toLocaleString('en-IN')} Due</span>`;
 
         card.innerHTML = `
           <div class="p-3 flex justify-between items-center cursor-pointer hover:bg-amber-100/50 transition" onclick="toggleAlertDetails('alert-details-${i}')">
@@ -2179,8 +2173,8 @@
 
           <div id="alert-details-${i}" class="hidden bg-white border-t border-amber-200/60 p-3 space-y-2 text-[10px]">
             <div class="grid grid-cols-2 gap-1 text-slate-600">
-              <div>Total Charges: <strong>₹${b.totalAmount}</strong></div>
-              <div>Advance Paid: <strong class="text-emerald-600">₹${b.advanced}</strong></div>
+              <div>Total Charges: <strong>â¹${b.totalAmount}</strong></div>
+              <div>Advance Paid: <strong class="text-emerald-600">â¹${b.advanced}</strong></div>
             </div>
             <div class="flex justify-end pt-1 border-t border-slate-100">
               <button onclick="closeAlertModal(); openBookingModal('${b.id}')" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-full font-bold text-[10px] flex items-center gap-1 transition shadow-xs">
@@ -2424,14 +2418,14 @@
       const totalDue = filteredBookings.reduce((sum, b) => sum + (b.totalDue || 0), 0);
 
       document.getElementById('dash-total-bookings').innerText = totalBookings;
-      document.getElementById('dash-total-amount').innerText = `₹${totalAmt.toLocaleString('en-IN')}`;
-      document.getElementById('dash-advanced').innerText = `₹${totalAdv.toLocaleString('en-IN')}`;
-      document.getElementById('dash-due').innerText = `₹${totalDue.toLocaleString('en-IN')}`;
+      document.getElementById('dash-total-amount').innerText = `â¹${totalAmt.toLocaleString('en-IN')}`;
+      document.getElementById('dash-advanced').innerText = `â¹${totalAdv.toLocaleString('en-IN')}`;
+      document.getElementById('dash-due').innerText = `â¹${totalDue.toLocaleString('en-IN')}`;
     }
 
     function sendReceiptViaWhatsApp() {
       if (!activeModalBooking) {
-        alert("⚠️ Booking information not found!");
+        alert("â ï¸ Booking information not found!");
         return;
       }
 
@@ -2441,14 +2435,14 @@
       
       let validationErrors = [];
       if (!phone || phone.length !== 10) {
-        validationErrors.push("• Guest contact number must be exactly 10 digits.");
+        validationErrors.push("â¢ Guest contact number must be exactly 10 digits.");
       }
       if (!(parseFloat(b.advanced) > 0)) {
-        validationErrors.push("• Advanced payment must be greater than 0.");
+        validationErrors.push("â¢ Advanced payment must be greater than 0.");
       }
 
       if (validationErrors.length > 0) {
-        alert("⚠️ Cannot send via WhatsApp:\n\n" + validationErrors.join("\n"));
+        alert("â ï¸ Cannot send via WhatsApp:\n\n" + validationErrors.join("\n"));
         return;
       }
 
@@ -2462,17 +2456,17 @@
         `Dear *${b.name}*,\n` +
         `Thank you for booking with us! Here are your booking details:\n\n` +
         `*Reservation Details:*\n` +
-        `• Booking ID: *${b.bookingCode}*\n` +
-        `• Room No: ${roomsDisplay}\n` +
-        `• Check-In: ${formatDateTime(b.checkIn)}\n` +
-        `• Check-Out: ${formatDateTime(effectiveOut)}\n\n` +
+        `â¢ Booking ID: *${b.bookingCode}*\n` +
+        `â¢ Room No: ${roomsDisplay}\n` +
+        `â¢ Check-In: ${formatDateTime(b.checkIn)}\n` +
+        `â¢ Check-Out: ${formatDateTime(effectiveOut)}\n\n` +
         `*Billing Summary:*\n` +
-        `• Total Amount: ₹${b.totalAmount}\n` +
-        `• Advance Amount: ₹${b.advanced}\n` +
-        `• Balance Due: ₹${b.totalDue}\n\n` +
+        `â¢ Total Amount: â¹${b.totalAmount}\n` +
+        `â¢ Advance Amount: â¹${b.advanced}\n` +
+        `â¢ Balance Due: â¹${b.totalDue}\n\n` +
         `*UPI Payment Details:*\n` +
-        `• UPI ID: *${upiId}*\n\n` +
-        `We look forward to hosting you! 🏠`;
+        `â¢ UPI ID: *${upiId}*\n\n` +
+        `We look forward to hosting you! ð `;
 
       const encodedMessage = encodeURIComponent(messageText);
       const whatsappUrl = `https://api.whatsapp.com/send?phone=${fullPhoneNumber}&text=${encodedMessage}`;
@@ -2503,6 +2497,8 @@
       const cOut = getEffectiveCheckoutTime(b);
       const isClosed = now > cOut;
       const isInactive = isInactiveBooking(b);
+      const isLive = now >= cIn && now <= cOut;
+      const isUpcoming = now < cIn;
 
       if (waBtn) {
         if (isClosed || isInactive) {
@@ -2588,8 +2584,8 @@
           ${mealNotesStr}
         </td>
         <td class="p-2.5 text-center">${daysFormattedStr}</td>
-        <td class="p-2.5 text-right">₹${(b.perDayPrice || 0).toLocaleString('en-IN')}</td>
-        <td class="p-2.5 text-right font-semibold text-slate-800">₹${roomTotal.toLocaleString('en-IN')}</td>
+        <td class="p-2.5 text-right">â¹${(b.perDayPrice || 0).toLocaleString('en-IN')}</td>
+        <td class="p-2.5 text-right font-semibold text-slate-800">â¹${roomTotal.toLocaleString('en-IN')}</td>
       `;
       tbody.appendChild(roomTr);
 
@@ -2607,8 +2603,8 @@
             <span class="text-[9px] text-amber-700 font-normal block">Stay: ${extraJoinedFmt} to ${extraOutFmt || 'Check-Out'}</span>
           </td>
           <td class="p-2.5 text-center">${extraDaysFormattedStr}</td>
-          <td class="p-2.5 text-right">₹${(b.perDayPrice || 0).toLocaleString('en-IN')}</td>
-          <td class="p-2.5 text-right font-semibold text-amber-900">₹${extraPersonTotal.toLocaleString('en-IN')}</td>
+          <td class="p-2.5 text-right">â¹${(b.perDayPrice || 0).toLocaleString('en-IN')}</td>
+          <td class="p-2.5 text-right font-semibold text-amber-900">â¹${extraPersonTotal.toLocaleString('en-IN')}</td>
         `;
         tbody.appendChild(extraTr);
       }
@@ -2625,8 +2621,8 @@
             foodTr.innerHTML = `
               <td class="p-2.5 font-semibold text-slate-800">Extra Food <span class="text-[9px] text-slate-500 font-normal block">${fo.foodDesc || 'Food Item'}${foodDateTimeFmt}</span></td>
               <td class="p-2.5 text-center">${plateCount} ${plateLabel}</td>
-              <td class="p-2.5 text-right">₹${(fo.itemPrice || 0).toLocaleString('en-IN')}</td>
-              <td class="p-2.5 text-right font-semibold text-slate-800">₹${(fo.foodCharge || 0).toLocaleString('en-IN')}</td>
+              <td class="p-2.5 text-right">â¹${(fo.itemPrice || 0).toLocaleString('en-IN')}</td>
+              <td class="p-2.5 text-right font-semibold text-slate-800">â¹${(fo.foodCharge || 0).toLocaleString('en-IN')}</td>
             `;
             tbody.appendChild(foodTr);
           }
@@ -2635,18 +2631,18 @@
       
       const cabList = parseCabTrips(b.cabTrips);
       if (cabList.length > 0) {
-        cabList.forEach((trip, idx) => {
-          if (trip.rate > 0 || trip.remark) {
+        cabList.forEach(trip => {
+          if (trip.rate > 0) {
              const cabTr = document.createElement('tr');
              const dtFormat = trip.dateTime ? ` (${formatDateTime(trip.dateTime)})` : '';
              cabTr.innerHTML = `
               <td class="p-2.5 font-semibold text-indigo-900">
-                Cab Trip ${idx + 1}${dtFormat}
-                ${trip.remark ? `<span class="text-[9px] text-indigo-700 font-normal block">Remarks: ${trip.remark}</span>` : ''}
+                Cab Fare - ${trip.tripName}${dtFormat}
+                ${trip.remark ? `<span class="text-[9px] text-indigo-700 font-normal block">Remark: ${trip.remark}</span>` : ''}
               </td>
               <td class="p-2.5 text-center">1 Trip</td>
-              <td class="p-2.5 text-right">₹${(trip.rate || 0).toLocaleString('en-IN')}</td>
-              <td class="p-2.5 text-right font-semibold text-indigo-900">₹${(trip.rate || 0).toLocaleString('en-IN')}</td>
+              <td class="p-2.5 text-right">â¹${(trip.rate || 0).toLocaleString('en-IN')}</td>
+              <td class="p-2.5 text-right font-semibold text-indigo-900">â¹${(trip.rate || 0).toLocaleString('en-IN')}</td>
             `;
             tbody.appendChild(cabTr);
           }
@@ -2656,13 +2652,13 @@
       const initialAdv = b.initialAdv !== undefined ? b.initialAdv : b.advanced;
       const clearDueAmt = b.clearedDue || 0;
 
-      document.getElementById('inv-sum-total').innerText = `₹${(b.totalAmount || 0).toLocaleString('en-IN')}`;
-      document.getElementById('inv-sum-advance').innerText = `₹${(initialAdv || 0).toLocaleString('en-IN')}`;
-      document.getElementById('inv-sum-due').innerText = `₹${(b.totalDue || 0).toLocaleString('en-IN')}`;
+      document.getElementById('inv-sum-total').innerText = `â¹${(b.totalAmount || 0).toLocaleString('en-IN')}`;
+      document.getElementById('inv-sum-advance').innerText = `â¹${(initialAdv || 0).toLocaleString('en-IN')}`;
+      document.getElementById('inv-sum-due').innerText = `â¹${(b.totalDue || 0).toLocaleString('en-IN')}`;
 
       const clearDueRow = document.getElementById('inv-clear-due-row');
       if (clearDueAmt > 0) {
-        document.getElementById('inv-sum-clear-due').innerText = `₹${clearDueAmt.toLocaleString('en-IN')}`;
+        document.getElementById('inv-sum-clear-due').innerText = `â¹${clearDueAmt.toLocaleString('en-IN')}`;
         clearDueRow.classList.remove('hidden');
       } else {
         clearDueRow.classList.add('hidden');
@@ -2680,12 +2676,12 @@
       const foodWin = getModalFoodWindow();
 
       if (!foodWin && !disabled) {
-        alert("⚠️ Please enter valid Check-In and Check-Out date & time first before adding extra food!");
+        alert("â ï¸ Please enter valid Check-In and Check-Out date & time first before adding extra food!");
         return;
       }
 
       if (foodWin && foodWin.minFoodDt >= foodWin.maxFoodDt && !disabled) {
-        alert("⚠️ Invalid stay window! The duration between Check-In (+15m) and Check-Out (-30m) is too short to order food.");
+        alert("â ï¸ Invalid stay window! The duration between Check-In (+15m) and Check-Out (-30m) is too short to order food.");
         return;
       }
 
@@ -2733,7 +2729,7 @@
         </div>
 
         <div class="sm:col-span-2">
-          <label class="block font-semibold text-slate-600 mb-0.5">Price/Plate (₹)</label>
+          <label class="block font-semibold text-slate-600 mb-0.5">Price/Plate (â¹)</label>
           <input type="number" value="${itemPrice}" min="0" ${disabledAttr} oninput="calculateFoodRowTotal(this)" class="cust-food-price w-full ${bgClass} border border-slate-200 rounded-xl px-2 py-1 focus:outline-none focus:border-amber-500">
         </div>
         
@@ -2743,7 +2739,7 @@
         </div>
 
         <div class="sm:col-span-2">
-          <label class="block font-semibold text-slate-600 mb-0.5">Total (₹)</label>
+          <label class="block font-semibold text-slate-600 mb-0.5">Total (â¹)</label>
           <input type="number" value="${charge}" readonly class="cust-food-charge w-full bg-slate-100 font-bold text-amber-700 border border-slate-200 rounded-xl px-2 py-1 cursor-not-allowed">
         </div>
 
@@ -2778,14 +2774,6 @@
       }
     }
 
-    function updateCabTripLabels() {
-      const rows = document.querySelectorAll('#cab-trips-container .cab-trip-row');
-      rows.forEach((row, idx) => {
-        const nameInput = row.querySelector('.cust-cab-trip-name');
-        if (nameInput) nameInput.value = `Cab Trip ${idx + 1}`;
-      });
-    }
-
     function addCabTripRow(rate = 0, dateStr = '', timeStr = '', remark = '', disabled = false) {
       const container = document.getElementById('cab-trips-container');
       const tripCount = container.children.length + 1;
@@ -2804,7 +2792,7 @@
       itemRow.innerHTML = `
         <div class="sm:col-span-2">
           <label class="block font-semibold text-slate-600 mb-0.5">Trip Name</label>
-          <input type="text" value="Cab Trip ${tripCount}" readonly class="cust-cab-trip-name w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1 text-slate-500 font-bold cursor-not-allowed text-[10px]">
+          <input type="text" value="Trip ${tripCount}" readonly class="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1 text-slate-500 font-bold cursor-not-allowed text-[10px]">
         </div>
         <div class="sm:col-span-4">
           <label class="block font-semibold text-slate-600 mb-0.5"><i class="fa-regular fa-clock text-indigo-600 mr-1"></i> Date & Time</label>
@@ -2814,11 +2802,11 @@
           </div>
         </div>
         <div class="sm:col-span-2">
-          <label class="block font-semibold text-slate-600 mb-0.5">Rate/Trip (₹)</label>
+          <label class="block font-semibold text-slate-600 mb-0.5">Rate/Trip (â¹)</label>
           <input type="number" value="${rate}" min="0" ${disabledAttr} oninput="calculateModalBilling()" class="cust-cab-rate w-full ${bgClass} border border-slate-200 rounded-xl px-2 py-1 focus:outline-none focus:border-indigo-500 font-bold text-indigo-700">
         </div>
         <div class="sm:col-span-3">
-          <label class="block font-semibold text-slate-600 mb-0.5">Remarks</label>
+          <label class="block font-semibold text-slate-600 mb-0.5">Remark</label>
           <input type="text" value="${remark}" ${disabledAttr} placeholder="e.g. Airport drop" class="cust-cab-remark w-full ${bgClass} border border-slate-200 rounded-xl px-2.5 py-1 focus:outline-none focus:border-indigo-500 text-[10px]">
         </div>
         <div class="sm:col-span-1 flex justify-end">
@@ -2828,7 +2816,6 @@
         </div>
       `;
       container.appendChild(itemRow);
-      updateCabTripLabels();
       calculateModalBilling();
     }
 
@@ -2836,7 +2823,6 @@
       const row = btn.closest('.cab-trip-row');
       if (row) {
         row.remove();
-        updateCabTripLabels();
         calculateModalBilling();
       }
     }
@@ -2864,6 +2850,7 @@
         b = state.bookings.find(item => String(item.id) === String(bookingId));
         if (b) {
           if (isInactiveBooking(b)) {
+            // "just receipt view will be enabled."
             printInvoice(bookingId);
             return;
           }
@@ -3007,6 +2994,7 @@
       if (b) {
         document.getElementById('modal-title').innerText = isPast3Days ? 'Closed Booking (Read-Only)' : (isClosedBooking ? 'Closed Booking (Billing Active)' : 'Edit Booking Details');
         
+        // ** ONLY ALLOW EDITING OF MAIN CHECK-IN AND CHECK-OUT DATES IF BOOKING IS UPCOMING **
         setInputEnabled(document.getElementById('cust-checkin-date'), isUpcomingBooking);
         setInputEnabled(document.getElementById('cust-checkin-time'), isUpcomingBooking);
         setInputEnabled(document.getElementById('cust-checkout-date'), isUpcomingBooking);
@@ -3123,11 +3111,13 @@
         document.getElementById('modal-title').innerText = 'Add New Booking';
         document.getElementById('modal-booking-id').value = '';
         
+        // DO NOT lock the fields if adding a new booking
         setInputEnabled(document.getElementById('cust-checkin-date'), true);
         setInputEnabled(document.getElementById('cust-checkin-time'), true);
         setInputEnabled(document.getElementById('cust-checkout-date'), true);
         setInputEnabled(document.getElementById('cust-checkout-time'), true);
 
+        // Calculate and set today's date as min for new bookings strictly using IST standard
         const todayDt = new Date();
         const utcMs = todayDt.getTime();
         const istDate = new Date(utcMs + (330 * 60000));
@@ -3158,6 +3148,7 @@
 
         document.getElementById('cust-country-code').value = "+91";
 
+        // SET DEFAULT CHECK-IN AND CHECK-OUT TIME TO 11:00 AM FOR NEW BOOKING
         document.getElementById('cust-checkin-time').value = "11:00";
         document.getElementById('cust-checkout-time').value = "11:00";
 
@@ -3165,6 +3156,7 @@
         
         if (extraPersonDateInput) extraPersonDateInput.value = "";
         
+        // SET EXTRA PERSON DEFAULT TIMES TO 11:00 AM FOR NEW BOOKING
         if (extraPersonTimeInput) extraPersonTimeInput.value = "11:00";
         if (extraPersonOutDateInput) extraPersonOutDateInput.value = "";
         if (extraPersonOutTimeInput) extraPersonOutTimeInput.value = "11:00";
@@ -3251,7 +3243,7 @@
         const mainInFull = new Date(`${mainInDate}T${mainInTime}:00+05:30`);
 
         if (epInFull < mainInFull) {
-          alert(`⚠️ Additional person check-in cannot be earlier than the main check-in (${formatDateTime(`${mainInDate}T${mainInTime}`)}). Please correct it.`);
+          alert(`â ï¸ Additional person check-in cannot be earlier than the main check-in (${formatDateTime(`${mainInDate}T${mainInTime}`)}). Please correct it.`);
         }
       }
 
@@ -3260,7 +3252,7 @@
         const mainOutFull = new Date(`${latestOutD}T${latestOutT}:00+05:30`);
 
         if (epOutFull > mainOutFull) {
-          alert(`⚠️ Additional person check-out date cannot be later than the main/extended check-out date (${formatDateTime(`${latestOutD}T${latestOutT}`)}). Please correct it.`);
+          alert(`â ï¸ Additional person check-out date cannot be later than the main/extended check-out date (${formatDateTime(`${latestOutD}T${latestOutT}`)}). Please correct it.`);
         }
       }
       
@@ -3282,7 +3274,7 @@
       if (outDateInput && extDateInput) {
         extDateInput.min = outDateInput.value;
         if (extDateInput.value && extDateInput.value < outDateInput.value) {
-          alert("⚠️ Extended Check-Out date cannot be prior to the initial Check-Out date!");
+          alert("â ï¸ Extended Check-Out date cannot be prior to the initial Check-Out date!");
           extDateInput.value = outDateInput.value;
         }
       }
@@ -3302,7 +3294,7 @@
       }
 
       if (clearVal + initialAdvance > total) {
-        alert("⚠️ Payment amount exceeds the remaining balance due!");
+        alert("â ï¸ Payment amount exceeds the remaining balance due!");
         document.getElementById('cust-clear-bill').value = 0;
         document.getElementById('cust-due').value = Math.max(0, total - initialAdvance);
         return;
@@ -3390,7 +3382,7 @@
       let currentAdvVal = parseFloat(advanceInput.value) || 0;
 
       if (currentAdvVal > total) {
-        alert(`⚠️ Advance payment (₹${currentAdvVal}) cannot exceed the total bill amount (₹${total})!`);
+        alert(`â ï¸ Advance payment (â¹${currentAdvVal}) cannot exceed the total bill amount (â¹${total})!`);
         currentAdvVal = total;
         advanceInput.value = total;
       }
@@ -3417,13 +3409,13 @@
       const guestName = formatTitleCase(document.getElementById('cust-name').value.trim());
 
       if (!guestName) {
-        alert("⚠️ Guest Name is a mandatory field!");
+        alert("â ï¸ Guest Name is a mandatory field!");
         return;
       }
 
       const contactNoVal = document.getElementById('cust-contact').value.trim();
       if (contactNoVal && contactNoVal.length !== 10) {
-        alert("⚠️ Please provide a valid 10-digit guest contact number.");
+        alert("â ï¸ Please provide a valid 10-digit guest contact number.");
         return;
       }
 
@@ -3435,6 +3427,7 @@
       const bookingModalId = document.getElementById('modal-booking-id').value;
       const id = bookingModalId;
 
+      // Add strict check-in date validation for New Booking
       if (!id) {
         const todayDt = new Date();
         const utcMs = todayDt.getTime();
@@ -3446,7 +3439,7 @@
         const todayStr = `${yyyy}-${mm}-${dd}`;
         
         if (inDate < todayStr) {
-          alert("⚠️ Main check-in date cannot be earlier than today!");
+          alert("â ï¸ Main check-in date cannot be earlier than today!");
           return;
         }
       }
@@ -3457,7 +3450,7 @@
       }
 
       if (selectedRooms.length === 0) {
-        alert("⚠️ Please select at least one Room No.");
+        alert("â ï¸ Please select at least one Room No.");
         return;
       }
 
@@ -3483,7 +3476,7 @@
       const epOutDateCheck = document.getElementById('cust-extra-person-out-date')?.value;
       
       if (extraPersons === 0 && (epDateCheck || epOutDateCheck)) {
-        alert("⚠️ You have entered Additional Person stay dates, but the 'Add Extra Person(s)' count is 0. Please update the person count or clear the dates.");
+        alert("â ï¸ You have entered Additional Person stay dates, but the 'Add Extra Person(s)' count is 0. Please update the person count or clear the dates.");
         return;
       }
 
@@ -3502,7 +3495,7 @@
         let epOutTime = document.getElementById('cust-extra-person-out-time')?.value;
 
         if (!epDate || !epTime || !epOutDate || !epOutTime) {
-          alert("⚠️ Please specify custom Check-In and Check-Out dates & times for the Additional Person(s).");
+          alert("â ï¸ Please specify custom Check-In and Check-Out dates & times for the Additional Person(s).");
           return;
         }
 
@@ -3513,12 +3506,12 @@
         let epOutDt = new Date(extraPersonOut);
         
         if (epInDt < mainCheckInDt) {
-           alert(`⚠️ Additional Person Check-In date & time cannot be earlier than the main Check-In date & time (${formatDateTime(checkIn)}).`);
+           alert(`â ï¸ Additional Person Check-In date & time cannot be earlier than the main Check-In date & time (${formatDateTime(checkIn)}).`);
            return;
         }
 
         if (epOutDt > latestCheckoutDt) {
-          alert(`⚠️ Additional Person Check-Out date & time cannot exceed main/extended Check-Out date & time (${formatDateTime(latestCheckoutStr)}).`);
+          alert(`â ï¸ Additional Person Check-Out date & time cannot exceed main/extended Check-Out date & time (${formatDateTime(latestCheckoutStr)}).`);
           extraPersonOut = latestCheckoutStr;
           epOutDt = latestCheckoutDt;
           epOutDate = toLocalISOString(epOutDt).split('T')[0];
@@ -3565,7 +3558,7 @@
       if (foodValidationError && foodWin) {
         const minStr = formatDateTime(foodWin.minFoodDt);
         const maxStr = formatDateTime(foodWin.maxFoodDt);
-        alert(`❌ Extra Food Order Validation Error!\n\nAll Extra Food order times must be strictly after 15 minutes of Check-In (${minStr}) and at least 30 minutes before Check-Out / Extended Check-Out (${maxStr}).`);
+        alert(`â Extra Food Order Validation Error!\n\nAll Extra Food order times must be strictly after 15 minutes of Check-In (${minStr}) and at least 30 minutes before Check-Out / Extended Check-Out (${maxStr}).`);
         return;
       }
       
@@ -3579,17 +3572,18 @@
         const timeVal = row.querySelector('.cust-cab-time').value || '';
         
         let remark = row.querySelector('.cust-cab-remark').value || '';
+        // Cleanse remark string of characters that might mess up the tabular representation delimiters
         remark = remark.replace(/\|/g, '-').replace(/\n/g, ' ').trim();
 
         const dt = (dateVal && timeVal) ? `${dateVal}T${timeVal}:00+05:30` : '';
 
-        if (rate > 0 || remark || dateVal) {
+        if (rate > 0 || remark) {
           totalCabFareToSave += rate;
           if (remark) {
              cabRemarksList.push(remark);
           }
           cabTripsList.push({
-            tripName: `Cab Trip ${index + 1}`,
+            tripName: `Trip ${index + 1}`,
             dateStr: dateVal,
             timeStr: timeVal,
             dateTime: dt,
@@ -3599,6 +3593,7 @@
         }
       });
 
+      // Construct a Tabular Text String to store securely inside the Google Sheets cell
       let cabTripsTabular = "";
       if (cabTripsList.length > 0) {
         cabTripsTabular = "Trip Name | Date | Time | Rate | Remark\n" + 
@@ -3614,6 +3609,7 @@
         return;
       }
 
+      // Check for same room / date conflict
       const conflict = state.bookings.find(b => {
         if (isInactiveBooking(b)) return false;
         if (id && String(b.id) === String(id)) return false;
@@ -3635,7 +3631,7 @@
         const confOutVal = (isTrue(conflict.hasExtendedCheckout) && conflict.extendedCheckOut) ? conflict.extendedCheckOut : conflict.checkOut;
         const confOutFormatted = formatDateTime(confOutVal);
         const conflictRooms = getBookingRooms(conflict).join(', ');
-        alert(`❌ Booking Conflict Alert!\n\nRoom(s) ${conflictRooms} is already occupied by ${conflict.name} until ${confOutFormatted}.\n\nPlease select a check-in time after ${confOutFormatted} or assign different rooms.`);
+        alert(`â Booking Conflict Alert!\n\nRoom(s) ${conflictRooms} is already occupied by ${conflict.name} until ${confOutFormatted}.\n\nPlease select a check-in time after ${confOutFormatted} or assign different rooms.`);
         return;
       }
 
@@ -3693,7 +3689,7 @@
         noOfDays: parseInt(document.getElementById('cust-days').value) || 0,
         perDayPrice: parseFloat(document.getElementById('cust-price').value) || 0,
         foodOrders: foodOrdersList,
-        cabTrips: cabTripsTabular,
+        cabTrips: cabTripsTabular, // <--- Now saving directly as Tabular View to GS
         cabFare: totalCabFareToSave,
         cabRemark: cabRemarksList.join(' | '),
         totalAmount: totalAmt,
@@ -3822,7 +3818,7 @@
         if (parseFood.length > 0) {
           const totalFoodCharge = parseFood.reduce((acc, fo) => acc + (fo.foodCharge || 0), 0);
           if (totalFoodCharge > 0) {
-            foodSummaryHtml = `<div class="text-[9px] ${!isMasterValid ? 'text-rose-950 font-bold' : 'text-amber-800 font-semibold'}"><i class="fa-solid fa-utensils text-[8px] mr-0.5"></i>Food (${parseFood.length}): +₹${totalFoodCharge}</div>`;
+            foodSummaryHtml = `<div class="text-[9px] ${!isMasterValid ? 'text-rose-950 font-bold' : 'text-amber-800 font-semibold'}"><i class="fa-solid fa-utensils text-[8px] mr-0.5"></i>Food (${parseFood.length}): +â¹${totalFoodCharge}</div>`;
           }
         }
         
@@ -3837,7 +3833,7 @@
         }
         
         if (totalCab > 0) {
-          cabSummaryHtml = `<div class="text-[9px] ${!isMasterValid ? 'text-rose-950 font-bold' : 'text-indigo-800 font-semibold'}"><i class="fa-solid fa-taxi text-[8px] mr-0.5"></i>Cab: +₹${totalCab}</div>`;
+          cabSummaryHtml = `<div class="text-[9px] ${!isMasterValid ? 'text-rose-950 font-bold' : 'text-indigo-800 font-semibold'}"><i class="fa-solid fa-taxi text-[8px] mr-0.5"></i>Cab: +â¹${totalCab}</div>`;
         }
 
         const printOnClick = `printInvoice('${b.id}')`;
@@ -3888,15 +3884,15 @@
             <div class="${!isMasterValid ? 'text-rose-900' : 'text-slate-500'} text-[9px]">to ${checkOutFmt} ${isTrue(b.hasExtendedCheckout) ? '<span class="text-blue-600 font-bold">(Ext)</span>' : ''}</div>
           </td>
           <td class="py-2.5 px-3">
-            <div class="font-bold ${!isMasterValid ? 'text-rose-950' : 'text-slate-800'}">₹${b.perDayPrice}/day (${b.noOfDays}d)</div>
+            <div class="font-bold ${!isMasterValid ? 'text-rose-950' : 'text-slate-800'}">â¹${b.perDayPrice}/day (${b.noOfDays}d)</div>
             ${foodSummaryHtml}
             ${cabSummaryHtml}
           </td>
           <td class="py-2.5 px-3 font-bold ${!isMasterValid ? 'text-rose-950' : 'text-slate-800'}">
-            ₹${b.totalAmount}
-            <span class="block text-[9px] text-emerald-600 font-medium">Adv: ₹${b.advanced}</span>
+            â¹${b.totalAmount}
+            <span class="block text-[9px] text-emerald-600 font-medium">Adv: â¹${b.advanced}</span>
           </td>
-          <td class="py-2.5 px-3 font-bold ${b.totalDue > 0 ? 'text-rose-600' : 'text-emerald-600'}">₹${b.totalDue}</td>
+          <td class="py-2.5 px-3 font-bold ${b.totalDue > 0 ? 'text-rose-600' : 'text-emerald-600'}">â¹${b.totalDue}</td>
           <td class="py-2.5 px-3 text-center">
             ${actionButtonsHtml}
           </td>
@@ -4136,9 +4132,9 @@
             Status: <span class="${statusColorClass}">${statusText}</span>
           </div>
           <div class="flex justify-between items-center text-[9px] pt-1 border-t border-slate-700/60">
-            <span class="text-emerald-400 font-semibold">Total: ₹${b.totalAmount}</span>
+            <span class="text-emerald-400 font-semibold">Total: â¹${b.totalAmount}</span>
             <span class="${b.totalDue > 0 ? 'text-rose-400 font-bold' : 'text-emerald-400 font-bold'}">
-              ${b.totalDue > 0 ? `Due: ₹${b.totalDue}` : 'Paid'}
+              ${b.totalDue > 0 ? `Due: â¹${b.totalDue}` : 'Paid'}
             </span>
           </div>
         `;
@@ -4165,5 +4161,5 @@
       if (box) box.classList.add('hidden');
     }
   </script>
-</body>
-</html>
+  </body>
+  </html>
