@@ -1115,12 +1115,45 @@
       return `${dd}/${mm}/${yy} ${hh}:${min}`;
     }
     
-    // Robust parsing for generic JSON array fields (Food Orders, Cab Trips)
+    // Robust parsing for generic JSON array fields
     function parseJSONField(fieldData) {
       if (!fieldData) return [];
       if (Array.isArray(fieldData)) return fieldData;
       if (typeof fieldData === 'string' && fieldData.length > 5) {
         try { return JSON.parse(fieldData); } catch (e) {}
+      }
+      return [];
+    }
+    
+    // Robust parsing for Tabular text format saved to Google Sheets for Cab Trips
+    function parseCabTrips(fieldData) {
+      if (!fieldData) return [];
+      if (Array.isArray(fieldData)) return fieldData; // Fallback for any old JSON objects
+      if (typeof fieldData === 'string') {
+        // Safe check for previous JSON arrays just in case
+        if (fieldData.trim().startsWith('[') || fieldData.trim().startsWith('{')) {
+          try { return JSON.parse(fieldData); } catch(e) {}
+        }
+        // Handle new Tabular Format extraction
+        if (fieldData.includes('Trip Name | Date | Time | Rate | Remark')) {
+          const lines = fieldData.trim().split('\n').slice(1);
+          return lines.map(line => {
+            const parts = line.split(' | ');
+            if (parts.length >= 4) {
+              const dateStr = parts[1] ? parts[1].trim() : '';
+              const timeStr = parts[2] ? parts[2].trim() : '';
+              return {
+                tripName: parts[0] ? parts[0].trim() : '',
+                dateStr: dateStr,
+                timeStr: timeStr,
+                dateTime: (dateStr && timeStr) ? `${dateStr}T${timeStr}:00+05:30` : '',
+                rate: parseFloat(parts[3]) || 0,
+                remark: parts[4] ? parts[4].trim() : ''
+              };
+            }
+            return null;
+          }).filter(Boolean);
+        }
       }
       return [];
     }
@@ -1730,7 +1763,7 @@
         }
 
         const foodList = parseJSONField(b.foodOrders);
-        const cabList = parseJSONField(b.cabTrips);
+        const cabList = parseCabTrips(b.cabTrips);
         
         return {
           "Booking ID (System)": b.id || "",
@@ -2596,7 +2629,7 @@
         });
       }
       
-      const cabList = parseJSONField(b.cabTrips);
+      const cabList = parseCabTrips(b.cabTrips);
       if (cabList.length > 0) {
         cabList.forEach(trip => {
           if (trip.rate > 0) {
@@ -3044,7 +3077,7 @@
           addFoodOrderItem(fo.foodDesc || '', fo.plates || 1, fo.itemPrice || 0, fo.foodCharge || 0, fDate, fTime, isClosedBooking);
         });
         
-        const tripsList = parseJSONField(b.cabTrips);
+        const tripsList = parseCabTrips(b.cabTrips);
         if (tripsList.length > 0) {
           tripsList.forEach(trip => {
             let cDate = '', cTime = '';
@@ -3537,7 +3570,11 @@
         const rate = parseFloat(row.querySelector('.cust-cab-rate').value) || 0;
         const dateVal = row.querySelector('.cust-cab-date').value || '';
         const timeVal = row.querySelector('.cust-cab-time').value || '';
-        const remark = row.querySelector('.cust-cab-remark').value || '';
+        
+        let remark = row.querySelector('.cust-cab-remark').value || '';
+        // Cleanse remark string of characters that might mess up the tabular representation delimiters
+        remark = remark.replace(/\|/g, '-').replace(/\n/g, ' ').trim();
+
         const dt = (dateVal && timeVal) ? `${dateVal}T${timeVal}:00+05:30` : '';
 
         if (rate > 0 || remark) {
@@ -3555,6 +3592,13 @@
           });
         }
       });
+
+      // Construct a Tabular Text String to store securely inside the Google Sheets cell
+      let cabTripsTabular = "";
+      if (cabTripsList.length > 0) {
+        cabTripsTabular = "Trip Name | Date | Time | Rate | Remark\n" + 
+          cabTripsList.map(t => `${t.tripName} | ${t.dateStr} | ${t.timeStr} | ${t.rate} | ${t.remark}`).join('\n');
+      }
 
       const effectiveCheckout = (hasExtendedCheckout && extendedCheckOut) ? extendedCheckOut : checkOut;
       const newIn = parseDateMs(checkIn);
@@ -3645,7 +3689,7 @@
         noOfDays: parseInt(document.getElementById('cust-days').value) || 0,
         perDayPrice: parseFloat(document.getElementById('cust-price').value) || 0,
         foodOrders: foodOrdersList,
-        cabTrips: cabTripsList,
+        cabTrips: cabTripsTabular, // <--- Now saving directly as Tabular View to GS
         cabFare: totalCabFareToSave,
         cabRemark: cabRemarksList.join(' | '),
         totalAmount: totalAmt,
@@ -3780,7 +3824,7 @@
         
         let cabSummaryHtml = '';
         let totalCab = 0;
-        const parseCab = parseJSONField(b.cabTrips);
+        const parseCab = parseCabTrips(b.cabTrips);
         
         if (parseCab.length > 0) {
             totalCab = parseCab.reduce((acc, t) => acc + (t.rate || 0), 0);
