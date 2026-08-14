@@ -1039,6 +1039,17 @@
       return d.getTime();
     }
     
+    // Convert a Date object to local ISO string to avoid UTC shifts
+    function toLocalISOString(date) {
+        if (!(date instanceof Date) || isNaN(date)) return '';
+        const yyyy = date.getFullYear();
+        const mm = String(date.getMonth() + 1).padStart(2, '0');
+        const dd = String(date.getDate()).padStart(2, '0');
+        const hh = String(date.getHours()).padStart(2, '0');
+        const min = String(date.getMinutes()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}T${hh}:${min}`;
+    }
+
     // NEW helper logic to format dates strictly into 24-hour style "dd/mm/yy hh:mm" for Excel exports
     function format24hDate(dtStr) {
       if (!dtStr) return '';
@@ -1206,8 +1217,8 @@
       const selectedDt = new Date(`${fDate}T${fTime}`);
 
       if (selectedDt < foodWin.minFoodDt || selectedDt > foodWin.maxFoodDt) {
-        const minStr = formatDateTime(foodWin.minFoodDt.toISOString());
-        const maxStr = formatDateTime(foodWin.maxFoodDt.toISOString());
+        const minStr = formatDateTime(foodWin.minFoodDt);
+        const maxStr = formatDateTime(foodWin.maxFoodDt);
         alert(`⚠️ Extra Food Order time must be after 15 mins of Check-In (${minStr}) and at least 30 mins before Check-Out (${maxStr})!`);
         
         const targetDt = selectedDt < foodWin.minFoodDt ? foodWin.minFoodDt : foodWin.maxFoodDt;
@@ -2713,8 +2724,7 @@
     function openBookingModal(bookingId = null) {
       const now = new Date().getTime();
       let isLiveBooking = false;
-      let isClosedAndWithin3Days = false;
-      let isExpiredOver3Days = false;
+      let isClosedBooking = false;
       let isUpcomingBooking = false;
 
       let b = null;
@@ -2722,7 +2732,8 @@
         b = state.bookings.find(item => String(item.id) === String(bookingId));
         if (b) {
           if (isInactiveBooking(b)) {
-            alert("This booking details are inactive and cannot be edited.");
+            // "just receipt view will be enabled."
+            printInvoice(bookingId);
             return;
           }
 
@@ -2733,21 +2744,13 @@
 
           const effectiveOutTime = getEffectiveCheckoutTime(b);
           const checkInTime = parseDateMs(b.checkIn);
-          const threeDaysMs = 3 * 24 * 60 * 60 * 1000;
 
-          if (now >= checkInTime && now <= effectiveOutTime) {
+          if (now > effectiveOutTime) {
+            isClosedBooking = true;
+          } else if (now >= checkInTime && now <= effectiveOutTime) {
             isLiveBooking = true;
-          } else if (now < checkInTime) {
+          } else {
             isUpcomingBooking = true;
-          } else if (now > effectiveOutTime) {
-            if (now > (effectiveOutTime + threeDaysMs)) {
-              isExpiredOver3Days = true;
-              alert("This booking closed more than 3 days ago. It is non-editable and can only be viewed or printed.");
-              printInvoice(bookingId);
-              return;
-            } else {
-              isClosedAndWithin3Days = true;
-            }
           }
         }
       } else {
@@ -2768,8 +2771,8 @@
       document.getElementById('cab-trips-container').innerHTML = '';
       populateAgentDropdown();
 
-      setSectionEditability('sec-guest-info', !isClosedAndWithin3Days);
-      setSectionEditability('sec-room-dates', !isClosedAndWithin3Days);
+      setSectionEditability('sec-guest-info', !isClosedBooking);
+      setSectionEditability('sec-room-dates', !isClosedBooking);
 
       const extChkBox = document.getElementById('cust-has-extended-checkout');
       const extDateInput = document.getElementById('cust-ext-checkout-date');
@@ -2795,7 +2798,7 @@
           }
         } else {
           if (timerNotice) {
-            timerNotice.innerText = isClosedAndWithin3Days ? "(Closed Booking - Inactive)" : "(Selectable only for Live Booking)";
+            timerNotice.innerText = isClosedBooking ? "(Closed Booking - Inactive)" : "(Selectable only for Live Booking)";
             timerNotice.classList.remove('hidden');
             timerNotice.classList.add('text-rose-600');
           }
@@ -2804,13 +2807,13 @@
 
       const mealsChkBox = document.getElementById('cust-include-meals');
       if (mealsChkBox) {
-        mealsChkBox.disabled = isClosedAndWithin3Days;
+        mealsChkBox.disabled = isClosedBooking;
       }
 
       const addFoodBtn = document.getElementById('btn-add-food-order');
       if (addFoodBtn) {
-        addFoodBtn.disabled = isClosedAndWithin3Days;
-        if (isClosedAndWithin3Days) {
+        addFoodBtn.disabled = isClosedBooking;
+        if (isClosedBooking) {
           addFoodBtn.classList.add('opacity-50', 'cursor-not-allowed');
         } else {
           addFoodBtn.classList.remove('opacity-50', 'cursor-not-allowed');
@@ -2819,15 +2822,15 @@
       
       const addCabBtn = document.getElementById('btn-add-cab-trip');
       if (addCabBtn) {
-        addCabBtn.disabled = isClosedAndWithin3Days;
-        if (isClosedAndWithin3Days) {
+        addCabBtn.disabled = isClosedBooking;
+        if (isClosedBooking) {
           addCabBtn.classList.add('opacity-50', 'cursor-not-allowed');
         } else {
           addCabBtn.classList.remove('opacity-50', 'cursor-not-allowed');
         }
       }
 
-      setSectionEditability('sec-cab-fare', !isClosedAndWithin3Days);
+      setSectionEditability('sec-cab-fare', !isClosedBooking);
       setSectionEditability('sec-billing-summary', true);
 
       const extraPersonsInput = document.getElementById('cust-extra-persons');
@@ -2837,8 +2840,7 @@
       const extraPersonOutDateInput = document.getElementById('cust-extra-person-out-date');
       const extraPersonOutTimeInput = document.getElementById('cust-extra-person-out-time');
 
-      // Extra person inputs remain fully editable for any saved booking (unless > 3 days closed)
-      const canEditExtras = !isClosedAndWithin3Days;
+      const canEditExtras = !isClosedBooking;
       if (extraPersonsInput) setInputEnabled(extraPersonsInput, canEditExtras);
       if (extraPersonDateInput) setInputEnabled(extraPersonDateInput, canEditExtras);
       if (extraPersonTimeInput) setInputEnabled(extraPersonTimeInput, canEditExtras);
@@ -2856,15 +2858,15 @@
       }
 
       if (b) {
-        document.getElementById('modal-title').innerText = isClosedAndWithin3Days 
+        document.getElementById('modal-title').innerText = isClosedBooking 
           ? 'Closed Booking (Billing Active)' 
           : 'Edit Booking Details';
         
-        // ** ALLOW EDITING OF MAIN CHECK-IN AND CHECK-OUT DATES IF BOOKING IS ALREADY CREATED **
-        setInputEnabled(document.getElementById('cust-checkin-date'), !isClosedAndWithin3Days);
-        setInputEnabled(document.getElementById('cust-checkin-time'), !isClosedAndWithin3Days);
-        setInputEnabled(document.getElementById('cust-checkout-date'), !isClosedAndWithin3Days);
-        setInputEnabled(document.getElementById('cust-checkout-time'), !isClosedAndWithin3Days);
+        // ** ONLY ALLOW EDITING OF MAIN CHECK-IN AND CHECK-OUT DATES IF BOOKING IS UPCOMING **
+        setInputEnabled(document.getElementById('cust-checkin-date'), isUpcomingBooking);
+        setInputEnabled(document.getElementById('cust-checkin-time'), isUpcomingBooking);
+        setInputEnabled(document.getElementById('cust-checkout-date'), isUpcomingBooking);
+        setInputEnabled(document.getElementById('cust-checkout-time'), isUpcomingBooking);
         
         document.getElementById('modal-booking-id').value = b.id;
         document.getElementById('cust-name').value = formatTitleCase(b.name);
@@ -2947,7 +2949,7 @@
               fDate = parts[0] || '';
               fTime = parts[1] ? parts[1].substring(0, 5) : '';
             }
-            addFoodOrderItem(fo.foodDesc || '', fo.plates || 1, fo.itemPrice || 0, fo.foodCharge || 0, fDate, fTime, isClosedAndWithin3Days);
+            addFoodOrderItem(fo.foodDesc || '', fo.plates || 1, fo.itemPrice || 0, fo.foodCharge || 0, fDate, fTime, isClosedBooking);
           });
         }
         
@@ -2961,13 +2963,13 @@
            
            if (tripsList.length > 0) {
              tripsList.forEach(trip => {
-                addCabTripRow(trip.rate || 0, trip.dateStr || '', trip.timeStr || '', trip.remark || '', isClosedAndWithin3Days);
+                addCabTripRow(trip.rate || 0, trip.dateStr || '', trip.timeStr || '', trip.remark || '', isClosedBooking);
              });
            } else if (b.cabFare !== undefined && (b.cabFare > 0 || b.cabRemark)) {
-             addCabTripRow(b.cabFare || 0, '', '', b.cabRemark || '', isClosedAndWithin3Days);
+             addCabTripRow(b.cabFare || 0, '', '', b.cabRemark || '', isClosedBooking);
            }
         } else if (b.cabFare !== undefined && (b.cabFare > 0 || b.cabRemark)) {
-          addCabTripRow(b.cabFare || 0, '', '', b.cabRemark || '', isClosedAndWithin3Days);
+          addCabTripRow(b.cabFare || 0, '', '', b.cabRemark || '', isClosedBooking);
         }
 
         document.getElementById('cust-price').value = b.perDayPrice;
@@ -3113,7 +3115,7 @@
         const mainInFull = new Date(`${mainInDate}T${mainInTime}`);
 
         if (epInFull < mainInFull) {
-          alert(`⚠️ Additional person check-in cannot be earlier than the main check-in (${formatDateTime(mainInFull.toISOString())}). Please correct it.`);
+          alert(`⚠️ Additional person check-in cannot be earlier than the main check-in (${formatDateTime(mainInFull)}). Please correct it.`);
         }
       }
 
@@ -3122,7 +3124,7 @@
         const mainOutFull = new Date(`${latestOutD}T${latestOutT}`);
 
         if (epOutFull > mainOutFull) {
-          alert(`⚠️ Additional person check-out date cannot be later than the main/extended check-out date (${formatDateTime(mainOutFull.toISOString())}). Please correct it.`);
+          alert(`⚠️ Additional person check-out date cannot be later than the main/extended check-out date (${formatDateTime(mainOutFull)}). Please correct it.`);
         }
       }
       
@@ -3217,7 +3219,7 @@
 
           if (epOutDt > latestMainCheckoutDt) {
             epOutDt = new Date(latestMainCheckoutDt.getTime());
-            epOutDate = epOutDt.toISOString().split('T')[0];
+            epOutDate = toLocalISOString(epOutDt).split('T')[0];
           }
 
           if (epInDt < epOutDt) {
@@ -3381,7 +3383,7 @@
           alert(`⚠️ Additional Person Check-Out date & time cannot exceed main/extended Check-Out date & time (${formatDateTime(latestCheckoutStr)}).`);
           extraPersonOut = latestCheckoutStr;
           epOutDt = latestCheckoutDt;
-          epOutDate = epOutDt.toISOString().split('T')[0];
+          epOutDate = toLocalISOString(epOutDt).split('T')[0];
         }
 
         if (epInDt < epOutDt) {
@@ -3423,8 +3425,8 @@
       });
 
       if (foodValidationError && foodWin) {
-        const minStr = formatDateTime(foodWin.minFoodDt.toISOString());
-        const maxStr = formatDateTime(foodWin.maxFoodDt.toISOString());
+        const minStr = formatDateTime(foodWin.minFoodDt);
+        const maxStr = formatDateTime(foodWin.maxFoodDt);
         alert(`❌ Extra Food Order Validation Error!\n\nAll Extra Food order times must be strictly after 15 minutes of Check-In (${minStr}) and at least 30 minutes before Check-Out / Extended Check-Out (${maxStr}).`);
         return;
       }
@@ -4025,3 +4027,4 @@
   </script>
 </body>
 </html>
+
