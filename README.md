@@ -1130,20 +1130,18 @@
       if (!fieldData) return [];
       if (Array.isArray(fieldData)) return fieldData; // Fallback for any old JSON objects
       if (typeof fieldData === 'string') {
-        // Safe check for previous JSON arrays just in case
         if (fieldData.trim().startsWith('[') || fieldData.trim().startsWith('{')) {
           try { return JSON.parse(fieldData); } catch(e) {}
         }
-        // Handle new Tabular Format extraction
         if (fieldData.includes('Trip Name | Date | Time | Rate | Remark')) {
           const lines = fieldData.trim().split('\n').slice(1);
-          return lines.map(line => {
+          return lines.map((line, idx) => {
             const parts = line.split(' | ');
             if (parts.length >= 4) {
               const dateStr = parts[1] ? parts[1].trim() : '';
               const timeStr = parts[2] ? parts[2].trim() : '';
               return {
-                tripName: parts[0] ? parts[0].trim() : '',
+                tripName: parts[0] ? parts[0].trim() : `Cab Trip ${idx + 1}`,
                 dateStr: dateStr,
                 timeStr: timeStr,
                 dateTime: (dateStr && timeStr) ? `${dateStr}T${timeStr}:00+05:30` : '',
@@ -1202,7 +1200,6 @@
           body: JSON.stringify(payload)
         });
 
-        // Try reading error text first safely to avoid JSON parse errors
         const textResult = await response.text();
         try {
             JSON.parse(textResult);
@@ -1210,9 +1207,8 @@
             console.error("Wipe format warning:", textResult);
         }
 
-        // Reset local state
         state.bookings = [];
-        state.yearlyCounters = {}; // Clears the sequence counter to start fresh IDs from 01
+        state.yearlyCounters = {}; 
         state.roomsCapacity = [
           { roomNo: 1, capacity: 4 },
           { roomNo: 2, capacity: 2 },
@@ -1765,7 +1761,7 @@
         const foodList = parseJSONField(b.foodOrders);
         const cabList = parseCabTrips(b.cabTrips);
         
-        return {
+        const row = {
           "Booking ID (System)": b.id || "",
           "Booking ID": b.bookingCode || "",
           "Invoice ID": b.invoiceNo || "",
@@ -1794,15 +1790,25 @@
           "Include Meals": (b.includeMeals !== false && b.includeMeals !== 'false') ? "Yes" : "No",
           "Stay Days": b.noOfDays || 0,
           "Price / Day": b.perDayPrice || 0,
-          "Food Orders Details": foodList.map(f => `${f.foodDesc} (${format24hDate(f.foodDateTime)}): ${f.plates} pl @ ₹${f.itemPrice} = ₹${f.foodCharge}`).join('\n'),
-          "Cab Trips Details": cabList.map(c => `${c.tripName} (${format24hDate(c.dateTime)}): ₹${c.rate} ${c.remark ? `[${c.remark}]` : ''}`).join('\n'),
-          "Total Cab Fare": b.cabFare || 0,
-          "Total Amount": b.totalAmount || 0,
-          "Initial Advance": b.initialAdv || 0,
-          "Cleared Due": b.clearedDue || 0,
-          "Advance Paid": b.advanced || 0,
-          "Balance Due": b.totalDue || 0
+          "Food Orders Details": foodList.map(f => `${f.foodDesc} (${format24hDate(f.foodDateTime)}): ${f.plates} pl @ ₹${f.itemPrice} = ₹${f.foodCharge}`).join('\n')
         };
+
+        // Export individual cab trip columns
+        for (let i = 1; i <= 5; i++) {
+          const trip = cabList[i - 1];
+          row[`Cab Trip ${i} Date & Time`] = trip ? format24hDate(trip.dateTime) : "";
+          row[`Cab Trip ${i} Rate/Trip`] = trip ? trip.rate || 0 : "";
+          row[`Cab Trip ${i} Remarks`] = trip ? trip.remark || "" : "";
+        }
+
+        row["Total Cab Fare"] = b.cabFare || 0;
+        row["Total Amount"] = b.totalAmount || 0;
+        row["Initial Advance"] = b.initialAdv || 0;
+        row["Cleared Due"] = b.clearedDue || 0;
+        row["Advance Paid"] = b.advanced || 0;
+        row["Balance Due"] = b.totalDue || 0;
+
+        return row;
       });
 
       const worksheet = XLSX.utils.json_to_sheet(exportData);
@@ -2497,8 +2503,6 @@
       const cOut = getEffectiveCheckoutTime(b);
       const isClosed = now > cOut;
       const isInactive = isInactiveBooking(b);
-      const isLive = now >= cIn && now <= cOut;
-      const isUpcoming = now < cIn;
 
       if (waBtn) {
         if (isClosed || isInactive) {
@@ -2631,14 +2635,14 @@
       
       const cabList = parseCabTrips(b.cabTrips);
       if (cabList.length > 0) {
-        cabList.forEach(trip => {
-          if (trip.rate > 0) {
+        cabList.forEach((trip, idx) => {
+          if (trip.rate > 0 || trip.remark) {
              const cabTr = document.createElement('tr');
              const dtFormat = trip.dateTime ? ` (${formatDateTime(trip.dateTime)})` : '';
              cabTr.innerHTML = `
               <td class="p-2.5 font-semibold text-indigo-900">
-                Cab Fare - ${trip.tripName}${dtFormat}
-                ${trip.remark ? `<span class="text-[9px] text-indigo-700 font-normal block">Remark: ${trip.remark}</span>` : ''}
+                Cab Trip ${idx + 1}${dtFormat}
+                ${trip.remark ? `<span class="text-[9px] text-indigo-700 font-normal block">Remarks: ${trip.remark}</span>` : ''}
               </td>
               <td class="p-2.5 text-center">1 Trip</td>
               <td class="p-2.5 text-right">₹${(trip.rate || 0).toLocaleString('en-IN')}</td>
@@ -2774,6 +2778,14 @@
       }
     }
 
+    function updateCabTripLabels() {
+      const rows = document.querySelectorAll('#cab-trips-container .cab-trip-row');
+      rows.forEach((row, idx) => {
+        const nameInput = row.querySelector('.cust-cab-trip-name');
+        if (nameInput) nameInput.value = `Cab Trip ${idx + 1}`;
+      });
+    }
+
     function addCabTripRow(rate = 0, dateStr = '', timeStr = '', remark = '', disabled = false) {
       const container = document.getElementById('cab-trips-container');
       const tripCount = container.children.length + 1;
@@ -2792,7 +2804,7 @@
       itemRow.innerHTML = `
         <div class="sm:col-span-2">
           <label class="block font-semibold text-slate-600 mb-0.5">Trip Name</label>
-          <input type="text" value="Trip ${tripCount}" readonly class="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1 text-slate-500 font-bold cursor-not-allowed text-[10px]">
+          <input type="text" value="Cab Trip ${tripCount}" readonly class="cust-cab-trip-name w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1 text-slate-500 font-bold cursor-not-allowed text-[10px]">
         </div>
         <div class="sm:col-span-4">
           <label class="block font-semibold text-slate-600 mb-0.5"><i class="fa-regular fa-clock text-indigo-600 mr-1"></i> Date & Time</label>
@@ -2806,7 +2818,7 @@
           <input type="number" value="${rate}" min="0" ${disabledAttr} oninput="calculateModalBilling()" class="cust-cab-rate w-full ${bgClass} border border-slate-200 rounded-xl px-2 py-1 focus:outline-none focus:border-indigo-500 font-bold text-indigo-700">
         </div>
         <div class="sm:col-span-3">
-          <label class="block font-semibold text-slate-600 mb-0.5">Remark</label>
+          <label class="block font-semibold text-slate-600 mb-0.5">Remarks</label>
           <input type="text" value="${remark}" ${disabledAttr} placeholder="e.g. Airport drop" class="cust-cab-remark w-full ${bgClass} border border-slate-200 rounded-xl px-2.5 py-1 focus:outline-none focus:border-indigo-500 text-[10px]">
         </div>
         <div class="sm:col-span-1 flex justify-end">
@@ -2816,6 +2828,7 @@
         </div>
       `;
       container.appendChild(itemRow);
+      updateCabTripLabels();
       calculateModalBilling();
     }
 
@@ -2823,6 +2836,7 @@
       const row = btn.closest('.cab-trip-row');
       if (row) {
         row.remove();
+        updateCabTripLabels();
         calculateModalBilling();
       }
     }
@@ -2850,7 +2864,6 @@
         b = state.bookings.find(item => String(item.id) === String(bookingId));
         if (b) {
           if (isInactiveBooking(b)) {
-            // "just receipt view will be enabled."
             printInvoice(bookingId);
             return;
           }
@@ -2994,7 +3007,6 @@
       if (b) {
         document.getElementById('modal-title').innerText = isPast3Days ? 'Closed Booking (Read-Only)' : (isClosedBooking ? 'Closed Booking (Billing Active)' : 'Edit Booking Details');
         
-        // ** ONLY ALLOW EDITING OF MAIN CHECK-IN AND CHECK-OUT DATES IF BOOKING IS UPCOMING **
         setInputEnabled(document.getElementById('cust-checkin-date'), isUpcomingBooking);
         setInputEnabled(document.getElementById('cust-checkin-time'), isUpcomingBooking);
         setInputEnabled(document.getElementById('cust-checkout-date'), isUpcomingBooking);
@@ -3111,13 +3123,11 @@
         document.getElementById('modal-title').innerText = 'Add New Booking';
         document.getElementById('modal-booking-id').value = '';
         
-        // DO NOT lock the fields if adding a new booking
         setInputEnabled(document.getElementById('cust-checkin-date'), true);
         setInputEnabled(document.getElementById('cust-checkin-time'), true);
         setInputEnabled(document.getElementById('cust-checkout-date'), true);
         setInputEnabled(document.getElementById('cust-checkout-time'), true);
 
-        // Calculate and set today's date as min for new bookings strictly using IST standard
         const todayDt = new Date();
         const utcMs = todayDt.getTime();
         const istDate = new Date(utcMs + (330 * 60000));
@@ -3148,7 +3158,6 @@
 
         document.getElementById('cust-country-code').value = "+91";
 
-        // SET DEFAULT CHECK-IN AND CHECK-OUT TIME TO 11:00 AM FOR NEW BOOKING
         document.getElementById('cust-checkin-time').value = "11:00";
         document.getElementById('cust-checkout-time').value = "11:00";
 
@@ -3156,7 +3165,6 @@
         
         if (extraPersonDateInput) extraPersonDateInput.value = "";
         
-        // SET EXTRA PERSON DEFAULT TIMES TO 11:00 AM FOR NEW BOOKING
         if (extraPersonTimeInput) extraPersonTimeInput.value = "11:00";
         if (extraPersonOutDateInput) extraPersonOutDateInput.value = "";
         if (extraPersonOutTimeInput) extraPersonOutTimeInput.value = "11:00";
@@ -3427,7 +3435,6 @@
       const bookingModalId = document.getElementById('modal-booking-id').value;
       const id = bookingModalId;
 
-      // Add strict check-in date validation for New Booking
       if (!id) {
         const todayDt = new Date();
         const utcMs = todayDt.getTime();
@@ -3572,18 +3579,17 @@
         const timeVal = row.querySelector('.cust-cab-time').value || '';
         
         let remark = row.querySelector('.cust-cab-remark').value || '';
-        // Cleanse remark string of characters that might mess up the tabular representation delimiters
         remark = remark.replace(/\|/g, '-').replace(/\n/g, ' ').trim();
 
         const dt = (dateVal && timeVal) ? `${dateVal}T${timeVal}:00+05:30` : '';
 
-        if (rate > 0 || remark) {
+        if (rate > 0 || remark || dateVal) {
           totalCabFareToSave += rate;
           if (remark) {
              cabRemarksList.push(remark);
           }
           cabTripsList.push({
-            tripName: `Trip ${index + 1}`,
+            tripName: `Cab Trip ${index + 1}`,
             dateStr: dateVal,
             timeStr: timeVal,
             dateTime: dt,
@@ -3593,7 +3599,6 @@
         }
       });
 
-      // Construct a Tabular Text String to store securely inside the Google Sheets cell
       let cabTripsTabular = "";
       if (cabTripsList.length > 0) {
         cabTripsTabular = "Trip Name | Date | Time | Rate | Remark\n" + 
@@ -3609,7 +3614,6 @@
         return;
       }
 
-      // Check for same room / date conflict
       const conflict = state.bookings.find(b => {
         if (isInactiveBooking(b)) return false;
         if (id && String(b.id) === String(id)) return false;
@@ -3689,7 +3693,7 @@
         noOfDays: parseInt(document.getElementById('cust-days').value) || 0,
         perDayPrice: parseFloat(document.getElementById('cust-price').value) || 0,
         foodOrders: foodOrdersList,
-        cabTrips: cabTripsTabular, // <--- Now saving directly as Tabular View to GS
+        cabTrips: cabTripsTabular,
         cabFare: totalCabFareToSave,
         cabRemark: cabRemarksList.join(' | '),
         totalAmount: totalAmt,
